@@ -6,3 +6,7 @@ spring:
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+jwt:
+  secret-key: bW9yZGF0aGVfMzJfYnl0ZXNfbG9uZ19zZWNyZXRfa2V5
+  access-exp: 900000          # 15분 (밀리초 단위: 15 * 60 * 1000 = 900,000)
+  refresh-exp: 604800000
