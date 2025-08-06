@@ -1,18 +1,16 @@
 package com.example.semiwiki_backend.global.security.jwt;
 
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetailsService;
-import com.example.semiwiki_backend.global.security.config.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtValidationException;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import javax.management.loading.PrivateClassLoader;
-import java.net.http.HttpRequest;
 import java.util.Date;
 
 @Slf4j
@@ -51,16 +49,17 @@ public class JwtTokenProvider{
       Claims claims = Jwts.parserBuilder()
           .setSigningKey(jwtProperties.getSecretKey())
           .build()
-          .parseClaimsJwt(token)
+          .parseClaimsJws(token)
           .getBody();
       return true;
     }catch (ExpiredJwtException e){
       log.warn("jwt expired",e);
-      throw new JwtExpiredException("jwt expired");
-    } catch (RuntimeException e) {
-      log.warn("jwt error",e);
-      throw new RuntimeException("jwt error");
+      throw new JwtExpiredException("jwt expired",e);
+    } catch (JwtException e) {
+      log.warn("jwt validate",e);
+      throw new JwtValidationException("jwt validate",e);
     }
+
   }
 
   //토큰 값 가져오기
@@ -72,12 +71,13 @@ public class JwtTokenProvider{
     return null;
   }
 
-  //아직 구현안됨 우현이 기다려
-//  public UsernamePasswordAuthenticationToken getAuthentication(String token) {
-//    Claims claims =getClaims(token);
-//    String username = claims.getSubject();
-//
-//  }
+
+  public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+    Claims claims =getClaims(token);
+    CustomUserDetails customUserDetails =(CustomUserDetails)customUserDetailsService.loadUserByUsername(claims.getSubject());
+    return new UsernamePasswordAuthenticationToken(customUserDetails,null,customUserDetails.getAuthorities());
+
+  }
 
   private Claims getClaims(String token) {
     try {
@@ -89,11 +89,11 @@ public class JwtTokenProvider{
 
     }catch (ExpiredJwtException e){
       log.warn("jwt expired",e);
-      throw new JwtExpiredException("jwt expired");
+      throw new JwtExpiredException("jwt expired",e);
 
     }catch (JwtException e) {
       log.warn("jwt error",e);
-      throw new RuntimeException("jwt error");
+      throw new JwtValidationException("jwt error",e);
     }
   }
 
