@@ -11,8 +11,6 @@ public enum ErrorCode {
     EXPIRED_TOKEN(HttpStatus.FORBIDDEN,"token is expired"),
     INVALID_TOKEN(HttpStatus.FORBIDDEN,"token is invalid");
 
-
-
     private final HttpStatus httpStatus;
     private final String message;
 }
