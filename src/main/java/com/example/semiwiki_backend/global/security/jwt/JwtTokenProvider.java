@@ -3,14 +3,17 @@ package com.example.semiwiki_backend.global.security.jwt;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetailsService;
 import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
-import com.example.semiwiki_backend.global.security.exception.JwtValidationException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Slf4j
@@ -18,10 +21,14 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider{
 
+
+
   private final JwtProperties jwtProperties;
   private final CustomUserDetailsService customUserDetailsService;
   private final static String ACCESS_TOKEN="access_token";
   private final static String REFRESH_TOKEN="refresh_token";
+
+  SecretKey  key = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
 
   public String generateAccessToken(String accountId) {
     return generateToken(accountId,ACCESS_TOKEN,jwtProperties.getAccessTokenExpiresIn());
@@ -35,7 +42,7 @@ public class JwtTokenProvider{
 
     Date now = new Date();
     return Jwts.builder()
-        .signWith(SignatureAlgorithm.HS256,jwtProperties.getSecretKey())
+        .signWith(SignatureAlgorithm.HS256,key)
         .setSubject(accountId)
         .setIssuedAt(now)
         .setExpiration(new Date(now.getTime()+time))
@@ -54,10 +61,10 @@ public class JwtTokenProvider{
       return true;
     }catch (ExpiredJwtException e){
       log.warn("jwt expired",e);
-      throw new JwtExpiredException("jwt expired",e);
+      throw JwtExpiredException.EXCEPTION;
     } catch (JwtException e) {
       log.warn("jwt validate",e);
-      throw new JwtValidationException("jwt validate",e);
+      throw JwtInvalidException.EXCEPTION;
     }
 
   }
@@ -89,15 +96,12 @@ public class JwtTokenProvider{
 
     }catch (ExpiredJwtException e){
       log.warn("jwt expired",e);
-      throw new JwtExpiredException("jwt expired",e);
+      throw JwtExpiredException.EXCEPTION;
 
     }catch (JwtException e) {
       log.warn("jwt error",e);
-      throw new JwtValidationException("jwt error",e);
+      throw  JwtInvalidException.EXCEPTION;
     }
   }
-
-
-
 
 }
