@@ -10,6 +10,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class UserNoticeTableId implements Serializable {
-    private Integer userId;
-    private Integer noticeBoardId;
+    private Integer user;
+    private Integer noticeBoard;
 }
