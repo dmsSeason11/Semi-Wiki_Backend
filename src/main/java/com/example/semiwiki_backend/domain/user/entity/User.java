@@ -1,14 +1,11 @@
 package com.example.semiwiki_backend.domain.user.entity;
 
 import com.example.semiwiki_backend.domain.user_notice_table.Entity.UserNoticeTable;
-import com.example.semiwiki_backend.global.security.auth.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
 
 import java.util.List;
 
 @Entity
-@Getter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +22,6 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<UserNoticeTable> noticeTables;
