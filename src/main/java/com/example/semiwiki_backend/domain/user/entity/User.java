@@ -2,10 +2,16 @@ package com.example.semiwiki_backend.domain.user.entity;
 
 import com.example.semiwiki_backend.domain.user_notice_table.entity.UserNoticeTable;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
