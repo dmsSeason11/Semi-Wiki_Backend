@@ -1,8 +1,12 @@
 package com.example.semiwiki_backend.domain.user.entity;
 
+
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import jakarta.persistence.*;
 import lombok.*;
+import com.example.semiwiki_backend.domain.user_notice_table.entity.UserNoticeTable;
+import jakarta.persistence.*;
+
 
 import java.util.List;
 
@@ -29,8 +33,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<UserNoticeBoard> noticeBoards;
-
 
 }
