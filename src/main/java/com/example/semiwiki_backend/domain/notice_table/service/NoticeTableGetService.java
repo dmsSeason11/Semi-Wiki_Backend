@@ -82,4 +82,27 @@ public class NoticeTableGetService {
         return noticeTableListDto;
     }
 
+    public List<NoticeTableListResponseDto> searchNoticeTables(String keyword) {
+        List<NoticeTable> noticeTableList = noticeTableRepository.findByTitleContaining(keyword);
+        List<NoticeTableListResponseDto> noticeTableListDto = new ArrayList<>();
+        for(NoticeTable noticeTable : noticeTableList) {
+            List<User> users = new ArrayList<>();
+            List<UserNoticeTable> userNoticeTableList = noticeTable.getUsers();
+            for(UserNoticeTable userNoticeTable : userNoticeTableList)
+                users.add(userNoticeTable.getUser());
+            int usersLength = users.size();
+            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
+                    .userId(users.get(usersLength-1).getId())
+                    .accountId(users.get(usersLength-1).getAccountId())
+                    .build();
+            noticeTableListDto.add(NoticeTableListResponseDto.builder()
+                    .id(noticeTable.getId())
+                    .categories(noticeTable.getCategories())
+                    .title(noticeTable.getTitle())
+                    .userPreview(userPreviewResponseDto)
+                    .build());
+        }
+        return noticeTableListDto;
+    }
+
 }

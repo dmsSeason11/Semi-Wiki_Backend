@@ -24,22 +24,29 @@ public class NoticeTableController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<NoticeTable> createNoticeBoard(NoticeTableCreateRequestDto dto){
+    public ResponseEntity<NoticeTable> createNoticeBoard(@RequestBody NoticeTableCreateRequestDto dto){
         NoticeTable noticeTable = noticeTableCreateService.createNoticeBoard(dto);
         if(noticeTable == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(noticeTable);
     }
 
-    @GetMapping("/${id}")
+    @GetMapping("/{id}")
     public ResponseEntity<NoticeTableDetailResponseDto> getNoticeBoardById(@PathVariable("id") Integer id){
         return ResponseEntity.ok().body(noticeTableGetService.getNoticeTable(id));
     }
 
     @GetMapping("/list")
-    ResponseEntity<List<NoticeTableListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> category){
-        if(category == null || category.isEmpty())
+    public ResponseEntity<List<NoticeTableListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories){
+        if(categories == null || categories.isEmpty())
             return ResponseEntity.ok().body(noticeTableGetService.getAllNoticeTables());
-        return ResponseEntity.ok().body(noticeTableGetService.getNoticeTableListByCategorys(category));
+        return ResponseEntity.ok().body(noticeTableGetService.getNoticeTableListByCategorys(categories));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<NoticeTableListResponseDto>> searchNoticeBoard(@RequestParam(value = "q", required = false) String q){
+        if(q == null || q.isEmpty())
+            return ResponseEntity.ok().body(noticeTableGetService.getAllNoticeTables());
+        return ResponseEntity.ok().body(noticeTableGetService.searchNoticeTables(q));
     }
 }
