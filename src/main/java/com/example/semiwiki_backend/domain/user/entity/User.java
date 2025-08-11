@@ -6,6 +6,7 @@ import com.example.semiwiki_backend.global.security.auth.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 import java.util.List;
 
 @Entity
