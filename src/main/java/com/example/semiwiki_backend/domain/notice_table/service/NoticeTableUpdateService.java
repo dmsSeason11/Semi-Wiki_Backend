@@ -29,7 +29,6 @@ public class NoticeTableUpdateService {
     }
 
     @Transactional
-<<<<<<< HEAD
     public NoticeTableDetailResponseDto updateNoticeTable(NoticeTableUpdateRequest dto){
         NoticeTable noticeTable = noticeTableRepository.findById(dto.getNoticeTableId())
                 .orElseThrow(() -> new NoticeTableNotFoundException("id : " + dto.getNoticeTableId() + " 를 찾을수 없습니다."));
@@ -58,24 +57,6 @@ public class NoticeTableUpdateService {
 
         List<User> users = new ArrayList<>();
         for (UserNoticeTable userNotice : userNoticeTableList)
-=======
-    public NoticeTableDetailResponseDto updateNoticeTable(NoticeTableUpdateRequest dto, Integer noticeTableId){
-        NoticeTable noticeTable = noticeTableRepository.findById(noticeTableId).orElseThrow(() -> new NoticeTableNotFoundException("id : " + noticeTableId + " 를 찾을수 없습니다."));//noticeTable존재 확인
-
-        noticeTable.setTitle(dto.getTitle());
-        noticeTable.setContents(dto.getContents());
-        noticeTable.setCategories(dto.getCategories());//noticeTable 설정
-
-        List<UserNoticeTable> userNoticeTableList = noticeTable.getUsers();
-        userNoticeTableList.add(userNoticeTableRepository.save(UserNoticeTable.builder()
-                .user(userRepository.findById(dto.getUserId()).orElseThrow(() -> new UserNotFoundException("유저를 찾을수 없습니다.")))
-                .noticeBoard(noticeTable).build()));
-        noticeTable.setUsers(userNoticeTableList);
-
-        List<UserNoticeTable> userNoticeList = noticeTable.getUsers();
-        List<User> users = new ArrayList<>();
-        for(UserNoticeTable userNotice : userNoticeTableList)
->>>>>>> origin/feat/5-notice-table
             users.add(userNotice.getUser());
 
         return NoticeTableDetailResponseDto.builder()
@@ -84,8 +65,5 @@ public class NoticeTableUpdateService {
                 .categories(noticeTable.getCategories())
                 .users(users).build();
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/feat/5-notice-table
 }

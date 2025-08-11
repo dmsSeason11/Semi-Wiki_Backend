@@ -52,13 +52,10 @@ public class NoticeTableController {
         if(q == null || q.isEmpty())
             return ResponseEntity.ok().body(noticeTableGetService.getAllNoticeTables());
         return ResponseEntity.ok().body(noticeTableGetService.searchNoticeTables(q));
-<<<<<<< HEAD
     }
 
     @PutMapping("/put")
     public ResponseEntity<NoticeTableDetailResponseDto> updateNoticeBoard(@RequestBody NoticeTableUpdateRequest dto){
         return ResponseEntity.ok().body(noticeTableUpdateService.updateNoticeTable(dto));
-=======
->>>>>>> origin/feat/5-notice-table
     }
 }
