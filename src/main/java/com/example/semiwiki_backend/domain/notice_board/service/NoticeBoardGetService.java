@@ -37,8 +37,8 @@ public class NoticeBoardGetService {
                 .build();
     }
 
-    public List<NoticeBoardListResponseDto> getNoticeBoardListByCategorys(List<String> categories) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllByCategory(categories);
+    public List<NoticeBoardListResponseDto> getNoticeBoardListByCategories(List<String> categories) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesAllMatch(categories);
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
@@ -84,7 +84,30 @@ public class NoticeBoardGetService {
     }
 
     public List<NoticeBoardListResponseDto> searchNoticeBoards(String keyword) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContaining(keyword);
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingIgnoreCase(keyword);
+        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
+        for(NoticeBoard noticeBoard : noticeBoardList) {
+            List<User> users = new ArrayList<>();
+            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
+            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
+                users.add(userNoticeBoard.getUser());
+            int usersLength = users.size();
+            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
+                    .userId(users.get(usersLength-1).getId())
+                    .accountId(users.get(usersLength-1).getAccountId())
+                    .build();
+            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
+                    .id(noticeBoard.getId())
+                    .categories(noticeBoard.getCategories())
+                    .title(noticeBoard.getTitle())
+                    .userPreview(userPreviewResponseDto)
+                    .build());
+        }
+        return noticeBoardListDto;
+    }
+
+    public List<NoticeBoardListResponseDto> searchAndFindByCategoryNoticeBoards(String keyword, List<String> categories) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllByTitleContainingAndCategories(keyword, categories);
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();

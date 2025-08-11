@@ -2,6 +2,7 @@ package com.example.semiwiki_backend.domain.user.entity;
 
 
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import com.example.semiwiki_backend.global.security.auth.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,10 +30,15 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(nullable = false)
     private String password;
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<UserNoticeBoard> noticeBoards;
+
 
 }

@@ -44,10 +44,15 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories){
-        if(categories == null || categories.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards());
-        return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategorys(categories));
+    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories,@RequestParam(value = "q", required = false) String q){
+        if(categories == null || categories.isEmpty()) {
+            if(q == null || q.isEmpty())
+                return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards());
+            return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q));
+        }
+        if(q == null || q.isEmpty())
+            return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategories(categories));
+        return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(q, categories));
     }
 
     @GetMapping("/search")
