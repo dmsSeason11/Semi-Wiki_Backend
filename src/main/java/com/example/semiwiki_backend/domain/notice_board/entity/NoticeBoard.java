@@ -36,7 +36,7 @@ public class NoticeBoard {
     @Column(name = "modificated_at")
     private LocalDateTime modficatedAt;
 
-    @OneToMany(mappedBy = "notice_board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE)
     private List<UserNoticeBoard> users;
 
     @ElementCollection
