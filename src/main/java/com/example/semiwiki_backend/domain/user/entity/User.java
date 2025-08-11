@@ -1,11 +1,21 @@
 package com.example.semiwiki_backend.domain.user.entity;
 
+
+import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import jakarta.persistence.*;
+import lombok.*;
 import com.example.semiwiki_backend.domain.user_notice_table.entity.UserNoticeTable;
 import jakarta.persistence.*;
+
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +33,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
-    @JoinColumn(name = "notice_tables")
-    private List<UserNoticeTable> noticeTables;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<UserNoticeBoard> noticeBoards;
 
 }

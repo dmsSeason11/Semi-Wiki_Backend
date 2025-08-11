@@ -1,0 +1,55 @@
+package com.example.semiwiki_backend.domain.notice_board.entity;
+
+import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class NoticeBoard {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false)
+    private int id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String contents;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "modificated_at")
+    private LocalDateTime modficatedAt;
+
+    @OneToMany(mappedBy = "notice_board", cascade = CascadeType.REMOVE)
+    private List<UserNoticeBoard> users;
+
+    @ElementCollection
+    @CollectionTable(name = "NoticeBoardCategory", joinColumns = @JoinColumn(name = "notice_board_id"))
+    @Column(name = "category")
+    private List<String> categories;
+
+    public void addUserNotice(UserNoticeBoard userNoticeBoard) {
+        if(userNoticeBoard == null) {
+            users = new ArrayList<>();
+        }
+
+        users.add(userNoticeBoard);
+        userNoticeBoard.setNoticeBoard(this);
+    }
+}

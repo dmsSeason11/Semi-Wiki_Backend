@@ -1,0 +1,109 @@
+package com.example.semiwiki_backend.domain.notice_board.service;
+
+import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
+import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
+import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
+import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
+import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
+import com.example.semiwiki_backend.domain.user.entity.User;
+import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class NoticeBoardGetService {
+    private final NoticeBoardRepository noticeBoardRepository;
+
+    public NoticeBoardGetService(NoticeBoardRepository noticeBoardRepository) {
+        this.noticeBoardRepository = noticeBoardRepository;
+    }
+
+    public NoticeBoardDetailResponseDto getNoticeBoard(Integer noticeBoardId) {
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException("id : " + noticeBoardId + " 를 찾을수 없습니다."));
+        List<User> users = new ArrayList<>();
+        List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
+        for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
+            users.add(userNoticeBoard.getUser());
+
+        return NoticeBoardDetailResponseDto.builder()
+                .title(noticeBoard.getTitle())
+                .contents(noticeBoard.getContents())
+                .createdAt(noticeBoard.getCreatedAt())
+                .modficatedAt(noticeBoard.getModficatedAt())
+                .users(users)
+                .build();
+    }
+
+    public List<NoticeBoardListResponseDto> getNoticeBoardListByCategorys(List<String> categories) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllByCategory(categories);
+        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
+        for(NoticeBoard noticeBoard : noticeBoardList) {
+            List<User> users = new ArrayList<>();
+            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
+            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
+                users.add(userNoticeBoard.getUser());
+            int usersLength = users.size();
+            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
+                    .userId(users.get(usersLength-1).getId())
+                    .accountId(users.get(usersLength-1).getAccountId())
+                    .build();
+            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
+                    .id(noticeBoard.getId())
+                    .categories(noticeBoard.getCategories())
+                    .title(noticeBoard.getTitle())
+                    .userPreview(userPreviewResponseDto)
+                    .build());
+        }
+        return noticeBoardListDto;
+    }
+
+    public List<NoticeBoardListResponseDto> getAllNoticeBoards() {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAll();
+        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
+        for(NoticeBoard noticeBoard : noticeBoardList) {
+            List<User> users = new ArrayList<>();
+            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
+            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
+                users.add(userNoticeBoard.getUser());
+            int usersLength = users.size();
+            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
+                            .userId(users.get(usersLength-1).getId())
+                            .accountId(users.get(usersLength-1).getAccountId())
+                            .build();
+            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
+                            .id(noticeBoard.getId())
+                            .categories(noticeBoard.getCategories())
+                            .title(noticeBoard.getTitle())
+                            .userPreview(userPreviewResponseDto)
+                    .build());
+        }
+        return noticeBoardListDto;
+    }
+
+    public List<NoticeBoardListResponseDto> searchNoticeBoards(String keyword) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContaining(keyword);
+        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
+        for(NoticeBoard noticeBoard : noticeBoardList) {
+            List<User> users = new ArrayList<>();
+            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
+            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
+                users.add(userNoticeBoard.getUser());
+            int usersLength = users.size();
+            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
+                    .userId(users.get(usersLength-1).getId())
+                    .accountId(users.get(usersLength-1).getAccountId())
+                    .build();
+            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
+                    .id(noticeBoard.getId())
+                    .categories(noticeBoard.getCategories())
+                    .title(noticeBoard.getTitle())
+                    .userPreview(userPreviewResponseDto)
+                    .build());
+        }
+        return noticeBoardListDto;
+    }
+
+}
