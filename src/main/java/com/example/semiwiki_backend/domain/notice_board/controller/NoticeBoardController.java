@@ -40,26 +40,26 @@ public class NoticeBoardController {
 
     @GetMapping("/{id}")
     public ResponseEntity<NoticeBoardDetailResponseDto> getNoticeBoardById(@PathVariable("id") Integer id){
-        return ResponseEntity.ok().body(noticeBoardGetService.getNoticeTable(id));
+        return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoard(id));
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories){
         if(categories == null || categories.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeTables());
-        return ResponseEntity.ok().body(noticeBoardGetService.getNoticeTableListByCategorys(categories));
+            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards());
+        return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategorys(categories));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<NoticeBoardListResponseDto>> searchNoticeBoard(@RequestParam(value = "q", required = false) String q){
         if(q == null || q.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeTables());
-        return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeTables(q));
+            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards());
+        return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q));
     }
 
     @PutMapping("/put/{id}")
     public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequest dto){
-        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeTable(dto,id));
+        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id));
     }
 
     @DeleteMapping("/delete/{id}")
