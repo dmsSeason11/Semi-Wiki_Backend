@@ -6,6 +6,7 @@ import com.example.semiwiki_backend.global.security.exception.JwtExpiredExceptio
 import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +22,19 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider{
 
-
-
   private final JwtProperties jwtProperties;
   private final CustomUserDetailsService customUserDetailsService;
   private final static String ACCESS_TOKEN="access_token";
   private final static String REFRESH_TOKEN="refresh_token";
 
-  SecretKey  key = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
+  private SecretKey secretKey;
+
+  @PostConstruct
+  public void init() {
+    this.secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));;
+  }
+
+
 
   public String generateAccessToken(String accountId) {
     return generateToken(accountId,ACCESS_TOKEN,jwtProperties.getAccessTokenExpiresIn());
@@ -42,7 +48,7 @@ public class JwtTokenProvider{
 
     Date now = new Date();
     return Jwts.builder()
-        .signWith(SignatureAlgorithm.HS256,key)
+        .signWith(SignatureAlgorithm.HS256,secretKey)
         .setSubject(accountId)
         .setIssuedAt(now)
         .setExpiration(new Date(now.getTime()+time))
@@ -54,7 +60,7 @@ public class JwtTokenProvider{
   public boolean validateToken(String token) {
     try{
       Claims claims = Jwts.parserBuilder()
-          .setSigningKey(jwtProperties.getSecretKey())
+          .setSigningKey(secretKey)
           .build()
           .parseClaimsJws(token)
           .getBody();
@@ -89,7 +95,7 @@ public class JwtTokenProvider{
   private Claims getClaims(String token) {
     try {
       return Jwts.parserBuilder()
-          .setSigningKey(jwtProperties.getSecretKey())
+          .setSigningKey(secretKey)
           .build()
           .parseClaimsJws(token)
           .getBody();
