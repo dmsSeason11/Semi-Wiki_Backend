@@ -1,5 +1,6 @@
 package com.example.semiwiki_backend.domain.notice_table.dto.request;
 
+<<<<<<< HEAD
 import lombok.*;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public class NoticeTableUpdateRequest {
     private String contents;
     private Integer userId;
     private List<String> categories;
+=======
+public class NoticeTableUpdateRequest {
+>>>>>>> origin/feat/5-notice-table
 }
