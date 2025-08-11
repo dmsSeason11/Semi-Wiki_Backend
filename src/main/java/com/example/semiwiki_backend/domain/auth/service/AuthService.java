@@ -1,8 +1,12 @@
 package com.example.semiwiki_backend.domain.auth.service;
 
+import ch.qos.logback.classic.spi.IThrowableProxy;
 import com.example.semiwiki_backend.domain.auth.dto.SignInRequest;
 import com.example.semiwiki_backend.domain.auth.dto.SignUpRequest;
 import com.example.semiwiki_backend.domain.auth.dto.TokenResponse;
+import com.example.semiwiki_backend.domain.auth.exception.AccountAlreadyExistsException;
+import com.example.semiwiki_backend.domain.auth.exception.AccountNotFoundException;
+import com.example.semiwiki_backend.domain.auth.exception.IncorrectPasswordException;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.global.security.auth.Role;
@@ -23,7 +27,7 @@ public class AuthService {
     @Transactional
     public TokenResponse join(SignUpRequest signUpRequest) {
         if(userRepository.existsByAccountId(signUpRequest.getAccountId())) {
-            throw new IllegalArgumentException ("Account already exists");
+            throw AccountAlreadyExistsException.EXCEPTION;
         }
 
         User user=User.builder()
@@ -41,10 +45,10 @@ public class AuthService {
 
     public TokenResponse login(SignInRequest signInRequest) {
         User user =userRepository.findByAccountId(signInRequest.getAccountId())
-            .orElseThrow(()->new IllegalArgumentException("Account not found"));
+            .orElseThrow(()-> AccountNotFoundException.EXCEPTION);
 
         if(!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException ("Incorrect password");
+            throw IncorrectPasswordException.EXCEPTION;
         }
 
         return new TokenResponse(jwtTokenProvider.generateAccessToken(user.getAccountId()));
