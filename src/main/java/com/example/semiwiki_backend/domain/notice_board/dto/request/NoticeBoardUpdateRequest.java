@@ -1,4 +1,4 @@
-package com.example.semiwiki_backend.domain.notice_table.dto.request;
+package com.example.semiwiki_backend.domain.notice_board.dto.request;
 
 import lombok.*;
 
@@ -9,8 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NoticeTableUpdateRequest {
-    private int noticeTableId;
+public class NoticeBoardUpdateRequest {
     private String title;
     private String contents;
     private Integer userId;

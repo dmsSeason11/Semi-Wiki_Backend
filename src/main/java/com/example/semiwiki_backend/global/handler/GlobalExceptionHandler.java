@@ -1,7 +1,7 @@
 package com.example.semiwiki_backend.global.handler;
 
-import com.example.semiwiki_backend.domain.notice_table.exception.NoCategoryException;
-import com.example.semiwiki_backend.domain.notice_table.exception.NoticeTableNotFoundException;
+import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
+import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(NoticeTableNotFoundException.class)
-    public ResponseEntity<String> handleNoticeTableNotFoundException(NoticeTableNotFoundException e){
+    @ExceptionHandler(NoticeBoardNotFoundException.class)
+    public ResponseEntity<String> handleNoticeBoardNotFoundException(NoticeBoardNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 

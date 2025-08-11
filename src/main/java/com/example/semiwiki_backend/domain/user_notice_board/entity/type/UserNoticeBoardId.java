@@ -1,4 +1,4 @@
-package com.example.semiwiki_backend.domain.user_notice_table.entity.type;
+package com.example.semiwiki_backend.domain.user_notice_board.entity.type;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Getter
 @Setter
-public class UserNoticeTableId implements Serializable {
+public class UserNoticeBoardId implements Serializable {
     private Integer user;
     private Integer noticeBoard;
 }

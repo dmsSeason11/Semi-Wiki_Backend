@@ -1,4 +1,4 @@
-package com.example.semiwiki_backend.domain.notice_table.dto.response;
+package com.example.semiwiki_backend.domain.notice_board.dto.response;
 
 import com.example.semiwiki_backend.domain.user.entity.User;
 import lombok.*;
@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NoticeTableDetailResponseDto {
+public class NoticeBoardDetailResponseDto {
     private String title;
 
     private String contents;
