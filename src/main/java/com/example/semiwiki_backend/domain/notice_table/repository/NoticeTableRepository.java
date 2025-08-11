@@ -10,4 +10,6 @@ import java.util.List;
 public interface NoticeTableRepository extends JpaRepository<NoticeTable, Integer> {
     @Query("SELECT DISTINCT n FROM NoticeTable n JOIN n.categories c WHERE c IN :categories")
     public List<NoticeTable> findAllByCategory(@Param("categories") List<String> categories);
+
+    public List<NoticeTable> findByTitleContaining(String keyword);
 }
