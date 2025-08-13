@@ -44,22 +44,22 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories,@RequestParam(value = "q", required = false) String q){
+    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories,@RequestParam(value = "q", required = false) String q, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
         if(categories == null || categories.isEmpty()) {
             if(q == null || q.isEmpty())
-                return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards());
-            return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q));
+                return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards(offset, limit));
+            return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q, offset, limit));
         }
         if(q == null || q.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategories(categories));
-        return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(q, categories));
+            return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategories(categories, offset, limit));
+        return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(q, categories, offset, limit));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> searchNoticeBoard(@RequestParam(value = "q", required = false) String q){
+    public ResponseEntity<List<NoticeBoardListResponseDto>> searchNoticeBoard(@RequestParam(value = "q", required = false) String q, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
         if(q == null || q.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards());
-        return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q));
+            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards(offset, limit));
+        return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q,offset, limit));
     }
 
     @PutMapping("/put/{id}")
