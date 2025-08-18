@@ -1,4 +1,4 @@
-package com.example.semiwiki_backend.domain.like.entity.type;
+package com.example.semiwiki_backend.domain.user_like.entity.type;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikeId implements Serializable {
+public class UserLikeId implements Serializable {
     private Integer user;
     private Integer noticeBoard;
 }

@@ -35,6 +35,7 @@ public class NoticeBoardGetService {
                 .createdAt(noticeBoard.getCreatedAt())
                 .modficatedAt(noticeBoard.getModficatedAt())
                 .users(users)
+                .categories(noticeBoard.getCategories())
                 .build();
     }
 
