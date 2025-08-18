@@ -40,7 +40,7 @@ public class NoticeBoardGetService {
     }
 
     public List<NoticeBoardListResponseDto> getNoticeBoardListByCategories(List<String> categories, int offset, int limit) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesAllMatch(categories, PageRequest.of(offset, limit));
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesContaining(categories, PageRequest.of(offset, limit));
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
@@ -109,7 +109,7 @@ public class NoticeBoardGetService {
     }
 
     public List<NoticeBoardListResponseDto> searchAndFindByCategoryNoticeBoards(String keyword, List<String> categories, int offset, int limit) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllByTitleContainingAndCategories(keyword, categories, PageRequest.of(offset, limit));
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingAndCategoriesContaining(keyword, categories, PageRequest.of(offset, limit));
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();

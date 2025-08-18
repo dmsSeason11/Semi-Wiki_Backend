@@ -55,13 +55,6 @@ public class NoticeBoardController {
         return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(q, categories, offset, limit));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> searchNoticeBoard(@RequestParam(value = "q", required = false) String q, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
-        if(q == null || q.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards(offset, limit));
-        return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q,offset, limit));
-    }
-
     @PutMapping("/put/{id}")
     public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequest dto){
         return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id));
