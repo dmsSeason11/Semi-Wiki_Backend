@@ -1,7 +1,7 @@
 package com.example.semiwiki_backend.global.handler;
 
-import com.example.semiwiki_backend.domain.like.exception.AlreadyLikedException;
-import com.example.semiwiki_backend.domain.like.exception.NotLikedException;
+import com.example.semiwiki_backend.domain.user_like.exception.AlreadyLikedException;
+import com.example.semiwiki_backend.domain.user_like.exception.NotLikedException;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
