@@ -55,8 +55,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(JwtInvalidException.class)
-    public ResponseEntity<String> JwtInvalidException(JwtInvalidException e){
+    public ResponseEntity<String> JwtInvalidException(JwtInvalidException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
 
     @ExceptionHandler(NotLikedException.class)
     public ResponseEntity<String> handleNotLikedException(NotLikedException e){
