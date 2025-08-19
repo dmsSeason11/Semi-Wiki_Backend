@@ -21,13 +21,17 @@ public class SignInService {
 
     public TokenResponse execute(SignInRequest signInRequest) {
         User user =userRepository.findByAccountId(signInRequest.getAccountId())
-                .orElseThrow(()-> AccountNotFoundException.EXCEPTION);
+                .orElseThrow((AccountNotFoundException::new));
 
         if(!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            throw IncorrectPasswordException.EXCEPTION;
+            throw new IncorrectPasswordException();
         }
 
-        return new TokenResponse(jwtTokenProvider.generateAccessToken(user.getAccountId()));
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getAccountId());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getAccountId());
+
+        return new TokenResponse(accessToken,refreshToken);
+
     }
 }
 

@@ -1,13 +1,16 @@
 package com.example.semiwiki_backend.global.security.exception;
 
 
+import lombok.Getter;
 
+@Getter
 public class JwtExpiredException extends RuntimeException {
 
-  //이런식으로 예외 처리를 하면 객체가 한번망 생성됨
-  public static final RuntimeException EXCEPTION = new JwtExpiredException();
-  private JwtExpiredException() {
+  private final ErrorCode errorCode;
+
+  public JwtExpiredException() {
     super(ErrorCode.EXPIRED_TOKEN.getMessage());
+    this.errorCode = ErrorCode.EXPIRED_TOKEN;
   }
 
 

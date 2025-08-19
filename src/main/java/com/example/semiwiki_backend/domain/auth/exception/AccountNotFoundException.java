@@ -1,11 +1,17 @@
 package com.example.semiwiki_backend.domain.auth.exception;
 
 import com.example.semiwiki_backend.global.security.exception.ErrorCode;
+import lombok.Getter;
 
+@Getter
 public class AccountNotFoundException extends RuntimeException {
-    public static final RuntimeException EXCEPTION = new AccountNotFoundException();
-    private AccountNotFoundException() {
+
+    private final ErrorCode errorCode;
+
+    public AccountNotFoundException() {
         super(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
+        this.errorCode = ErrorCode.ACCOUNT_NOT_FOUND;
     }
+
 
 }
