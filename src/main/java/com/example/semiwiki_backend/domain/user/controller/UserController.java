@@ -20,14 +20,14 @@ import java.util.List;
 public class UserController {
     private final UserReadService userReadService;
 
-    @GetMapping("{userId}")
-    public ResponseEntity<UserMyPageResponseDto> getUserMypageInfo(@PathVariable Integer userId) {
-        return ResponseEntity.ok().body(userReadService.GetUserInfo(userId));
+    @GetMapping("{accountId}")
+    public ResponseEntity<UserMyPageResponseDto> getUserMypageInfo(@PathVariable String accountId) {
+        return ResponseEntity.ok().body(userReadService.GetUserInfo(accountId));
     }
 
-    @GetMapping("{userId}/list")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> getUserNoticeBoardList(@PathVariable Integer userId) {
-        List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = userReadService.GetNoticeBoardsFromUser(userId);
+    @GetMapping("{accountId}/list")
+    public ResponseEntity<List<NoticeBoardListResponseDto>> getUserNoticeBoardList(@PathVariable String accountId) {
+        List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = userReadService.GetNoticeBoardsFromUser(accountId);
         if(noticeBoardListResponseDtos == null || noticeBoardListResponseDtos.isEmpty()){
             return ResponseEntity.noContent().build();
         }
