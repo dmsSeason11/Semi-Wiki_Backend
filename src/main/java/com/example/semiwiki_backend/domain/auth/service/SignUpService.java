@@ -24,7 +24,7 @@ public class SignUpService {
     @Transactional
     public TokenResponse execute(SignUpRequest signUpRequest) {
         if(userRepository.existsByAccountId(signUpRequest.getAccountId())) {
-            throw AccountAlreadyExistsException.EXCEPTION;
+            throw new AccountAlreadyExistsException();
         }
 
         User user=User.builder()
@@ -37,6 +37,8 @@ public class SignUpService {
 
         userRepository.save(user);
 
-        return new TokenResponse(jwtTokenProvider.generateAccessToken(user.getAccountId()));
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getAccountId());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getAccountId());
+        return new TokenResponse(accessToken,refreshToken);
     }
 }

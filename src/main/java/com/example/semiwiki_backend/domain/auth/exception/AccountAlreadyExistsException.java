@@ -1,11 +1,17 @@
 package com.example.semiwiki_backend.domain.auth.exception;
 
 import com.example.semiwiki_backend.global.security.exception.ErrorCode;
-import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import lombok.Getter;
 
+@Getter
 public class AccountAlreadyExistsException extends RuntimeException {
-  public static final RuntimeException EXCEPTION = new AccountAlreadyExistsException();
-  private AccountAlreadyExistsException() {
+
+    private final ErrorCode errorCode;
+
+  public AccountAlreadyExistsException() {
     super(ErrorCode.ACCOUNT_ALREADY_EXISTS.getMessage());
+    this.errorCode = ErrorCode.ACCOUNT_ALREADY_EXISTS;
   }
+
+
 }
