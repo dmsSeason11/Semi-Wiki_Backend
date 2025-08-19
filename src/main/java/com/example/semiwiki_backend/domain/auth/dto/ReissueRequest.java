@@ -1,13 +1,9 @@
 package com.example.semiwiki_backend.domain.auth.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @Getter
-@AllArgsConstructor
-public class TokenResponse {
-    private String accessToken;
+public class ReissueRequest {
+    private String accountId;
     private String refreshToken;
-
 }

@@ -1,14 +1,16 @@
 package com.example.semiwiki_backend.domain.auth.controller;
 
 
+import com.example.semiwiki_backend.domain.auth.dto.ReissueRequest;
 import com.example.semiwiki_backend.domain.auth.dto.SignInRequest;
 import com.example.semiwiki_backend.domain.auth.dto.TokenResponse;
 import com.example.semiwiki_backend.domain.auth.dto.SignUpRequest;
-import com.example.semiwiki_backend.domain.auth.service.SignInService;
-import com.example.semiwiki_backend.domain.auth.service.SignUpService;
+import com.example.semiwiki_backend.domain.auth.service.*;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +20,9 @@ public class AuthController {
 
     private final SignUpService signUpService;
     private final SignInService signInService;
+    private final CheckAccountIdService checkAccountIdService;
+    private final ReissueService reissueService;
+    private final LogoutService logoutService;
     private final UserRepository userRepository;
 
 
@@ -34,11 +39,23 @@ public class AuthController {
     }
 
     //true = 사용 가능, false = 사용 불가(이미 존재)
+    //수정 필요 account-id
     @GetMapping("/check-accountId")
     @ResponseStatus(HttpStatus.OK)
     public boolean checkAccountId(@RequestParam String accountId) {
-        boolean exists=userRepository.existsByAccountId(accountId);
-        return !exists;
+        return checkAccountIdService.execute(accountId);
+    }
+
+    @PostMapping("/reissue")
+    @ResponseStatus(HttpStatus.OK)
+    public TokenResponse reissue(@RequestBody ReissueRequest reissueRequest) {
+        return reissueService.execute(reissueRequest);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout(@RequestParam String accountId) {
+        logoutService.execute(accountId);
     }
 
 
