@@ -1,12 +1,10 @@
 package com.example.semiwiki_backend.domain.user_like.controller;
 
 import com.example.semiwiki_backend.domain.user_like.entity.UserLike;
-import com.example.semiwiki_backend.domain.user_like.repository.UserLikeRepository;
 import com.example.semiwiki_backend.domain.user_like.service.UserLikeCreateService;
 import com.example.semiwiki_backend.domain.user_like.service.UserLikeDeleteService;
 import com.example.semiwiki_backend.domain.user_like.service.UserLikeReadSerivce;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
-import com.example.semiwiki_backend.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

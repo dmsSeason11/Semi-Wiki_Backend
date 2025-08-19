@@ -1,7 +1,8 @@
 package com.example.semiwiki_backend.domain.notice_board.dto.response;
 
 import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 

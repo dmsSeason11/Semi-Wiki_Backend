@@ -20,7 +20,6 @@ public enum ErrorCode {
     NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked");
 
 
-
     private final HttpStatus httpStatus;
     private final String message;
 }

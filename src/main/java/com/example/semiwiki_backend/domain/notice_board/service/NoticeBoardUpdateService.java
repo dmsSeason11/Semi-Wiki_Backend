@@ -27,31 +27,37 @@ public class NoticeBoardUpdateService {
 
     @Transactional
     public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Integer userId) {
+        //user, noticeBoard 불러옴
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
         NoticeBoard noticeBoard = noticeBoardRepository.findById(id)
                 .orElseThrow(() -> new NoticeBoardNotFoundException());
 
-        noticeBoard.setTitle(dto.getTitle());
-        noticeBoard.setContents(dto.getContents());
-        noticeBoard.setCategories(dto.getCategories());
-
+        //유저가 기여했는지 확인, 기여 안된경우 기여한목록에 추가
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-
-        User userToAdd = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException()); // Users에 추가할 User
-
         boolean userExists = userNoticeBoardList.stream() // user가 있는지 확인
-                .anyMatch(unt -> unt.getUser().getId() == userToAdd.getId());
+                .anyMatch(unt -> unt.getUser().getId() == user.getId());
 
         if (!userExists) { // 없는경우에 실행
             UserNoticeBoard newUserNoticeBoard = userNoticeBoardRepository.save(
                     UserNoticeBoard.builder()
-                            .user(userToAdd)
+                            .user(user)
                             .noticeBoard(noticeBoard)
                             .build()
             );
-            userNoticeBoardList.add(newUserNoticeBoard);
         }
 
+        userNoticeBoardList.addAll(noticeBoard.getUsers());
+        NoticeBoard changingBoard = noticeBoardRepository.save(NoticeBoard.builder()
+                .title(dto.getTitle())
+                .id(noticeBoard.getId())
+                .categories(dto.getCategories())
+                .contents(dto.getContents())
+                .createdAt(noticeBoard.getCreatedAt())
+                .modficatedAt(noticeBoard.getModficatedAt())
+                .users(userNoticeBoardList).build());
+
+        //반환용
         List<User> users = new ArrayList<>();
         for (UserNoticeBoard userNotice : userNoticeBoardList)
             users.add(userNotice.getUser());

@@ -40,76 +40,27 @@ public class NoticeBoardGetService {
 
     public List<NoticeBoardListResponseDto> getNoticeBoardListByCategories(List<String> categories, int offset, int limit) {
         List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesContaining(categories, PageRequest.of(offset, limit));
-        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
-        for(NoticeBoard noticeBoard : noticeBoardList) {
-            List<User> users = new ArrayList<>();
-            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
-                users.add(userNoticeBoard.getUser());
-            int usersLength = users.size();
-            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
-                    .userId(users.get(usersLength-1).getId())
-                    .accountId(users.get(usersLength-1).getAccountId())
-                    .build();
-            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
-                    .id(noticeBoard.getId())
-                    .categories(noticeBoard.getCategories())
-                    .title(noticeBoard.getTitle())
-                    .userPreview(userPreviewResponseDto)
-                    .build());
-        }
-        return noticeBoardListDto;
+        return getNoticeBoardListResponseDtos(noticeBoardList);
     }
 
     public List<NoticeBoardListResponseDto> getAllNoticeBoards(int offset, int limit) {
         List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllNoticeBoards(PageRequest.of(offset, limit));
-        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
-        for(NoticeBoard noticeBoard : noticeBoardList) {
-            List<User> users = new ArrayList<>();
-            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
-                users.add(userNoticeBoard.getUser());
-            int usersLength = users.size();
-            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
-                    .userId(users.get(usersLength-1).getId())
-                    .accountId(users.get(usersLength-1).getAccountId())
-                    .build();
-            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
-                    .id(noticeBoard.getId())
-                    .categories(noticeBoard.getCategories())
-                    .title(noticeBoard.getTitle())
-                    .userPreview(userPreviewResponseDto)
-                    .build());
-
-        }
-        return noticeBoardListDto;
+        return getNoticeBoardListResponseDtos(noticeBoardList);
     }
+
+
 
     public List<NoticeBoardListResponseDto> searchNoticeBoards(String keyword, int offset, int limit) {
         List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingIgnoreCase(keyword,PageRequest.of(offset, limit));
-        List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
-        for(NoticeBoard noticeBoard : noticeBoardList) {
-            List<User> users = new ArrayList<>();
-            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
-                users.add(userNoticeBoard.getUser());
-            int usersLength = users.size();
-            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
-                    .userId(users.get(usersLength-1).getId())
-                    .accountId(users.get(usersLength-1).getAccountId())
-                    .build();
-            noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
-                    .id(noticeBoard.getId())
-                    .categories(noticeBoard.getCategories())
-                    .title(noticeBoard.getTitle())
-                    .userPreview(userPreviewResponseDto)
-                    .build());
-        }
-        return noticeBoardListDto;
+        return getNoticeBoardListResponseDtos(noticeBoardList);
     }
 
     public List<NoticeBoardListResponseDto> searchAndFindByCategoryNoticeBoards(String keyword, List<String> categories, int offset, int limit) {
         List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingAndCategoriesContaining(keyword, categories, PageRequest.of(offset, limit));
+        return getNoticeBoardListResponseDtos(noticeBoardList);
+    }
+
+    private List<NoticeBoardListResponseDto> getNoticeBoardListResponseDtos(List<NoticeBoard> noticeBoardList) {
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
@@ -130,5 +81,4 @@ public class NoticeBoardGetService {
         }
         return noticeBoardListDto;
     }
-
 }

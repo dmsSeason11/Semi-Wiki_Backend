@@ -7,5 +7,6 @@ import lombok.Getter;
 @Builder
 public class UserMyPageResponseDto {
     private String accountId;
+
     private int noticeBoardCount;
 }

@@ -1,7 +1,6 @@
 package com.example.semiwiki_backend.domain.user.service;
 
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
-import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.dto.response.UserMyPageResponseDto;
 import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
@@ -42,16 +41,20 @@ public class UserReadService {
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = new ArrayList<>();
 
         for(UserNoticeBoard userNoticeBoard : userNoticeBoards) {
+            //현재 userPreviewDto생성
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
                     .userId(user.getId())
                     .accountId(user.getAccountId())
                     .build();
+
+            //현재 리스트 한줄 생성
             NoticeBoardListResponseDto noticeBoardListResponseDto = NoticeBoardListResponseDto.builder()
                     .id(userNoticeBoard.getNoticeBoard().getId())
                     .title(userNoticeBoard.getNoticeBoard().getTitle())
                     .categories(userNoticeBoard.getNoticeBoard().getCategories())
                     .userPreview(userPreviewResponseDto)
                     .build();
+
             noticeBoardListResponseDtos.add(noticeBoardListResponseDto);
         }
         return noticeBoardListResponseDtos;

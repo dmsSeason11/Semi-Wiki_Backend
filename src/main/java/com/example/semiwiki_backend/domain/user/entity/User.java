@@ -1,14 +1,11 @@
 package com.example.semiwiki_backend.domain.user.entity;
 
-
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.example.semiwiki_backend.global.security.auth.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
-
 import java.util.List;
 
 @Entity
@@ -39,10 +36,7 @@ public class User {
     @JsonIgnore
     private String password;
 
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties({"noticeBoard"})
     private List<UserNoticeBoard> noticeBoards;
-
-
 }

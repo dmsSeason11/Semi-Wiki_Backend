@@ -1,6 +1,7 @@
 package com.example.semiwiki_backend.domain.notice_board.controller;
 
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
@@ -43,15 +44,26 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories,@RequestParam(value = "q", required = false) String q, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
+    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestBody NoticeBoardListDto noticeBoardListDto){
+        //dto에서 값 빼냄
+        final List<String> categories = noticeBoardListDto.getCategories();
+        final String keyword = noticeBoardListDto.getKeyword();
+        final int offset = noticeBoardListDto.getOffset();
+        final int limit = noticeBoardListDto.getLimit();
+
+        //카테고리가 없는경우
         if(categories == null || categories.isEmpty()) {
-            if(q == null || q.isEmpty())
+            //카테고리랑 키워드 둘다 없는경우
+            if(keyword == null || keyword.isEmpty())
                 return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards(offset, limit));
-            return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q, offset, limit));
+            //카테고리만 없는경우 == 키워드는 있는경우
+            return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(keyword, offset, limit));
         }
-        if(q == null || q.isEmpty())
+        //키워드만 없는경우
+        if(keyword == null || keyword.isEmpty())
             return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategories(categories, offset, limit));
-        return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(q, categories, offset, limit));
+        //둘 다 있는 경우
+        return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(keyword, categories, offset, limit));
     }
 
     @PutMapping("/put/{id}")
