@@ -1,6 +1,7 @@
 package com.example.semiwiki_backend.domain.notice_board.entity;
 
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,15 +38,16 @@ public class NoticeBoard {
     private LocalDateTime modficatedAt;
 
     @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE)
-    private List<UserNoticeBoard> users;
+    @JsonIgnoreProperties({"user"})
+    private List<UserNoticeBoard> users = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "NoticeBoardCategory", joinColumns = @JoinColumn(name = "notice_board_id"))
     @Column(name = "category")
-    private List<String> categories;
+    private List<String> categories = new ArrayList<>();
 
     public void addUserNotice(UserNoticeBoard userNoticeBoard) {
-        if(userNoticeBoard == null) {
+        if(users == null) {
             users = new ArrayList<>();
         }
 

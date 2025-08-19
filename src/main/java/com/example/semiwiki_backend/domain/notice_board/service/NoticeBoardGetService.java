@@ -8,6 +8,7 @@ import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRe
 import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,11 +35,12 @@ public class NoticeBoardGetService {
                 .createdAt(noticeBoard.getCreatedAt())
                 .modficatedAt(noticeBoard.getModficatedAt())
                 .users(users)
+                .categories(noticeBoard.getCategories())
                 .build();
     }
 
-    public List<NoticeBoardListResponseDto> getNoticeBoardListByCategories(List<String> categories) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesAllMatch(categories);
+    public List<NoticeBoardListResponseDto> getNoticeBoardListByCategories(List<String> categories, int offset, int limit) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesContaining(categories, PageRequest.of(offset, limit));
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
@@ -60,8 +62,8 @@ public class NoticeBoardGetService {
         return noticeBoardListDto;
     }
 
-    public List<NoticeBoardListResponseDto> getAllNoticeBoards() {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAll();
+    public List<NoticeBoardListResponseDto> getAllNoticeBoards(int offset, int limit) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllNoticeBoards(PageRequest.of(offset, limit));
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
@@ -83,8 +85,8 @@ public class NoticeBoardGetService {
         return noticeBoardListDto;
     }
 
-    public List<NoticeBoardListResponseDto> searchNoticeBoards(String keyword) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingIgnoreCase(keyword);
+    public List<NoticeBoardListResponseDto> searchNoticeBoards(String keyword, int offset, int limit) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingIgnoreCase(keyword,PageRequest.of(offset, limit));
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
@@ -106,8 +108,8 @@ public class NoticeBoardGetService {
         return noticeBoardListDto;
     }
 
-    public List<NoticeBoardListResponseDto> searchAndFindByCategoryNoticeBoards(String keyword, List<String> categories) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findAllByTitleContainingAndCategories(keyword, categories);
+    public List<NoticeBoardListResponseDto> searchAndFindByCategoryNoticeBoards(String keyword, List<String> categories, int offset, int limit) {
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingAndCategoriesContaining(keyword, categories, PageRequest.of(offset, limit));
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
             List<User> users = new ArrayList<>();
