@@ -1,7 +1,7 @@
 package com.example.semiwiki_backend.domain.notice_board.controller;
 
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequest;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
@@ -9,30 +9,29 @@ import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardCreat
 import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardDeleteService;
 import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardGetService;
 import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardUpdateService;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("notice-board")
+@RequiredArgsConstructor
 public class NoticeBoardController {
     private final NoticeBoardCreateService noticeBoardCreateService;
     private final NoticeBoardGetService noticeBoardGetService;
     private final NoticeBoardUpdateService noticeBoardUpdateService;
     private final NoticeBoardDeleteService noticeBoardDeleteService;
 
-    public NoticeBoardController(NoticeBoardCreateService noticeBoardCreateService, NoticeBoardGetService noticeBoardGetService, NoticeBoardUpdateService noticeBoardUpdateService, NoticeBoardDeleteService noticeBoardDeleteService) {
-        this.noticeBoardCreateService = noticeBoardCreateService;
-        this.noticeBoardGetService = noticeBoardGetService;
-        this.noticeBoardUpdateService = noticeBoardUpdateService;
-        this.noticeBoardDeleteService = noticeBoardDeleteService;
-    }
-
     @PostMapping("/post")
-    public ResponseEntity<NoticeBoard> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto){
-        NoticeBoard noticeBoard = noticeBoardCreateService.createNoticeBoard(dto);
+    public ResponseEntity<NoticeBoard> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+        NoticeBoard noticeBoard = noticeBoardCreateService.createNoticeBoard(dto,userId);
         if(noticeBoard == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(noticeBoard);
@@ -56,8 +55,10 @@ public class NoticeBoardController {
     }
 
     @PutMapping("/put/{id}")
-    public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequest dto){
-        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id));
+    public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequestDto dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id,userId));
     }
 
     @DeleteMapping("/delete/{id}")

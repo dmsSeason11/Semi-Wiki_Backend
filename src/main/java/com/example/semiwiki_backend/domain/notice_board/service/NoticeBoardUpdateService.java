@@ -1,6 +1,6 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequest;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
@@ -10,6 +10,7 @@ import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,21 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class NoticeBoardUpdateService {
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
 
-    public NoticeBoardUpdateService(NoticeBoardRepository noticeBoardRepository, UserRepository userRepository, UserNoticeBoardRepository userNoticeBoardRepository) {
-        this.noticeBoardRepository = noticeBoardRepository;
-        this.userRepository = userRepository;
-        this.userNoticeBoardRepository = userNoticeBoardRepository;
-    }
 
     @Transactional
-    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequest dto, Integer id){
+    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Integer userId) {
         NoticeBoard noticeBoard = noticeBoardRepository.findById(id)
-                .orElseThrow(() -> new NoticeBoardNotFoundException("id : " + id + " 를 찾을수 없습니다."));
+                .orElseThrow(() -> new NoticeBoardNotFoundException());
 
         noticeBoard.setTitle(dto.getTitle());
         noticeBoard.setContents(dto.getContents());
@@ -39,8 +36,8 @@ public class NoticeBoardUpdateService {
 
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
 
-        User userToAdd = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을수 없습니다.")); // Users에 추가할 User
+        User userToAdd = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException()); // Users에 추가할 User
 
         boolean userExists = userNoticeBoardList.stream() // user가 있는지 확인
                 .anyMatch(unt -> unt.getUser().getId() == userToAdd.getId());

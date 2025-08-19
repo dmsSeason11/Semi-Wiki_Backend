@@ -25,14 +25,14 @@ public class UserLikeCreateService {
     @Transactional
     public UserLike createLike(Integer userId, Integer boardId) {
 
-        UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾지 못했습니다.")), noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을수 없습니다.")));
+        UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()), noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException()));
 
         if(userLike != null)
-            throw new AlreadyLikedException("이미 좋아요를 눌렀습니다.");
+            throw new AlreadyLikedException();
 
         return userLikeRepository.save(UserLike.builder()
-                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾지 못했습니다.")))
-                .noticeBoard(noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을수 없습니다.")))
+                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()))
+                .noticeBoard(noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException()))
                 .build());
     }
 }

@@ -24,11 +24,11 @@ public class UserLikeDeleteService {
     }
 
     public void deleteLike(Integer userId, Integer boardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(user, noticeBoard);
         if(userLike == null)
-            throw new NotLikedException("이미 좋아요를 해제한 상태입니다.");
+            throw new NotLikedException();
         userLikeRepository.delete(userLike);
     }
 }

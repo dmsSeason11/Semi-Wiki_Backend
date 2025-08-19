@@ -10,7 +10,6 @@ import lombok.*;
 
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(UserLikeId.class)

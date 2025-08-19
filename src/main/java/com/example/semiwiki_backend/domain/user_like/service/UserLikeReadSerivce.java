@@ -23,14 +23,14 @@ public class UserLikeReadSerivce {
     }
 
     public Boolean isLike(Integer userId, Integer noticeBoardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(user, noticeBoard);
         return userLike != null;
     }
 
     public Integer countAllLikes(Integer boardId) {
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을수 없습니다."));
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         return userLikeRepository.countAllByNoticeBoard(noticeBoard);
     }
 }

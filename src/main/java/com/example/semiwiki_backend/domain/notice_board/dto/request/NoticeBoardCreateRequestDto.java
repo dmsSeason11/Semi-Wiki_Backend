@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class NoticeBoardCreateRequestDto {
     private String title;
 
     private String contents;
 
     private List<String> categories;
-
-    private Integer userId;
 }

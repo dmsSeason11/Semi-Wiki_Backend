@@ -8,6 +8,7 @@ import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,30 +16,25 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class NoticeBoardCreateService {
     private final NoticeBoardRepository noticeBoardRepository;
-
     private final UserRepository userRepository;
-
     private final UserNoticeBoardRepository userNoticeBoardRepository;
-    public NoticeBoardCreateService(NoticeBoardRepository noticeBoardRepository, UserRepository userRepository, UserNoticeBoardRepository userNoticeBoardRepository) {
-        this.noticeBoardRepository = noticeBoardRepository;
-        this.userRepository = userRepository;
-        this.userNoticeBoardRepository = userNoticeBoardRepository;
-    }
+
 
     @Transactional
-    public NoticeBoard createNoticeBoard(NoticeBoardCreateRequestDto dto) {
+    public NoticeBoard createNoticeBoard(NoticeBoardCreateRequestDto dto,Integer userId) {
         List<String> categories = dto.getCategories();
         if (categories == null || categories.isEmpty())
-            throw new NoCategoryException("카테고리가 없습니다.");
+            throw new NoCategoryException();
         NoticeBoard noticeBoard = noticeBoardRepository.save(NoticeBoard.builder()
                 .title(dto.getTitle())
                 .contents(dto.getContents())
                 .categories(categories)
                 .build());
         UserNoticeBoard userNoticeBoard = UserNoticeBoard.builder()
-                .user(userRepository.findById(dto.getUserId()).orElseThrow(() -> new UserNotFoundException("유저를 찾지 못했습니다.")))
+                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()))
                 .noticeBoard(noticeBoard).build();
         noticeBoard.addUserNotice(userNoticeBoard);
         userNoticeBoardRepository.save(userNoticeBoard);

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,11 +46,10 @@ public class NoticeBoard {
     private List<String> categories = new ArrayList<>();
 
     public void addUserNotice(UserNoticeBoard userNoticeBoard) {
-        if(users == null) {
-            users = new ArrayList<>();
+        if(this.users == null) {
+            this.users = new ArrayList<>();
         }
 
-        users.add(userNoticeBoard);
-        userNoticeBoard.setNoticeBoard(this);
+        this.users.add(userNoticeBoard);
     }
 }

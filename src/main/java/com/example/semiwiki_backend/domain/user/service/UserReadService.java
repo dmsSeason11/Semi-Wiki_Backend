@@ -26,7 +26,7 @@ public class UserReadService {
     //유저 마이페이지 정보 반환
     public UserMyPageResponseDto GetUserInfo(String accountId) {
         //유저 탐색
-        User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException("유저를 찾을수 없습니다."));
+        User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException());
         int noticeBoardcount = userNoticeBoardRepository.countUserNoticeBoardsByUser(user); //게시판과의 관계의 개수를 셈 == 기여한 게시판 수
 
         return  UserMyPageResponseDto.builder()
@@ -37,7 +37,7 @@ public class UserReadService {
 
     //유저가 기여한(제작, 수정) 게시글 목록
     public List<NoticeBoardListResponseDto> GetNoticeBoardsFromUser(String accountId) {
-        User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException("유저를 찾을수 없습니다."));
+        User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException());
         List<UserNoticeBoard> userNoticeBoards = user.getNoticeBoards();
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = new ArrayList<>();
 

@@ -8,6 +8,7 @@ import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRe
 import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class NoticeBoardGetService {
     private final NoticeBoardRepository noticeBoardRepository;
 
-    public NoticeBoardGetService(NoticeBoardRepository noticeBoardRepository) {
-        this.noticeBoardRepository = noticeBoardRepository;
-    }
 
     public NoticeBoardDetailResponseDto getNoticeBoard(Integer noticeBoardId) {
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException("id : " + noticeBoardId + " 를 찾을수 없습니다."));
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         List<User> users = new ArrayList<>();
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
         for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
@@ -72,15 +71,16 @@ public class NoticeBoardGetService {
                 users.add(userNoticeBoard.getUser());
             int usersLength = users.size();
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
-                            .userId(users.get(usersLength-1).getId())
-                            .accountId(users.get(usersLength-1).getAccountId())
-                            .build();
+                    .userId(users.get(usersLength-1).getId())
+                    .accountId(users.get(usersLength-1).getAccountId())
+                    .build();
             noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
-                            .id(noticeBoard.getId())
-                            .categories(noticeBoard.getCategories())
-                            .title(noticeBoard.getTitle())
-                            .userPreview(userPreviewResponseDto)
+                    .id(noticeBoard.getId())
+                    .categories(noticeBoard.getCategories())
+                    .title(noticeBoard.getTitle())
+                    .userPreview(userPreviewResponseDto)
                     .build());
+
         }
         return noticeBoardListDto;
     }

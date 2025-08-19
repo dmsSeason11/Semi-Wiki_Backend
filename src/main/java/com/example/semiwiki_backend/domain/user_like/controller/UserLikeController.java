@@ -7,26 +7,18 @@ import com.example.semiwiki_backend.domain.user_like.service.UserLikeDeleteServi
 import com.example.semiwiki_backend.domain.user_like.service.UserLikeReadSerivce;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import com.example.semiwiki_backend.global.security.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/like")
+@RequiredArgsConstructor
 public class UserLikeController {
     private final UserLikeCreateService userLikeCreateService;
     private final UserLikeReadSerivce userLikeReadSerivce;
     private final UserLikeDeleteService userLikeDeleteService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserLikeRepository userLikeRepository;
-
-    public UserLikeController(UserLikeCreateService userLikeCreateService, UserLikeReadSerivce userLikeReadSerivce, UserLikeDeleteService userLikeDeleteService, JwtTokenProvider jwtTokenProvider, UserLikeRepository userLikeRepository) {
-        this.userLikeCreateService = userLikeCreateService;
-        this.userLikeReadSerivce = userLikeReadSerivce;
-        this.userLikeDeleteService = userLikeDeleteService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userLikeRepository = userLikeRepository;
-    }
 
     @PostMapping("/{board_id}")
     public ResponseEntity<UserLike> postLike(@PathVariable int board_id, Authentication authentication) {
