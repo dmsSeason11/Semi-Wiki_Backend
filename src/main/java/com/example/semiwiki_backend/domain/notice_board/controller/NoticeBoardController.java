@@ -1,63 +1,50 @@
 package com.example.semiwiki_backend.domain.notice_board.controller;
 
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequest;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
-import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
-import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardCreateService;
-import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardDeleteService;
-import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardGetService;
-import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardUpdateService;
+import com.example.semiwiki_backend.domain.notice_board.service.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("notice-board")
+@RequiredArgsConstructor
 public class NoticeBoardController {
     private final NoticeBoardCreateService noticeBoardCreateService;
-    private final NoticeBoardGetService noticeBoardGetService;
+    private final NoticeBoardGetDetailService noticeBoardGetDetailService;
     private final NoticeBoardUpdateService noticeBoardUpdateService;
     private final NoticeBoardDeleteService noticeBoardDeleteService;
-
-    public NoticeBoardController(NoticeBoardCreateService noticeBoardCreateService, NoticeBoardGetService noticeBoardGetService, NoticeBoardUpdateService noticeBoardUpdateService, NoticeBoardDeleteService noticeBoardDeleteService) {
-        this.noticeBoardCreateService = noticeBoardCreateService;
-        this.noticeBoardGetService = noticeBoardGetService;
-        this.noticeBoardUpdateService = noticeBoardUpdateService;
-        this.noticeBoardDeleteService = noticeBoardDeleteService;
-    }
+    private final NoticeBoardGetListService noticeBoardGetListService;
 
     @PostMapping("/post")
-    public ResponseEntity<NoticeBoard> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto){
-        NoticeBoard noticeBoard = noticeBoardCreateService.createNoticeBoard(dto);
-        if(noticeBoard == null)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(noticeBoard);
+    public ResponseEntity<NoticeBoardDetailResponseDto> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto, Authentication authentication) {
+        NoticeBoardDetailResponseDto noticeBoardDetailResponseDto = noticeBoardCreateService.createNoticeBoard(dto,authentication);
+        if(noticeBoardDetailResponseDto == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(noticeBoardDetailResponseDto);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<NoticeBoardDetailResponseDto> getNoticeBoardById(@PathVariable("id") Integer id){
-        return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoard(id));
+        return ResponseEntity.ok().body(noticeBoardGetDetailService.getNoticeBoard(id));
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(value = "categories", required = false) List<String> categories,@RequestParam(value = "q", required = false) String q, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
-        if(categories == null || categories.isEmpty()) {
-            if(q == null || q.isEmpty())
-                return ResponseEntity.ok().body(noticeBoardGetService.getAllNoticeBoards(offset, limit));
-            return ResponseEntity.ok().body(noticeBoardGetService.searchNoticeBoards(q, offset, limit));
-        }
-        if(q == null || q.isEmpty())
-            return ResponseEntity.ok().body(noticeBoardGetService.getNoticeBoardListByCategories(categories, offset, limit));
-        return ResponseEntity.ok().body(noticeBoardGetService.searchAndFindByCategoryNoticeBoards(q, categories, offset, limit));
+    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestBody NoticeBoardListDto noticeBoardListDto){
+        return ResponseEntity.ok().body(noticeBoardGetListService.getNoticeBoardList(noticeBoardListDto));
     }
 
     @PutMapping("/put/{id}")
-    public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequest dto){
-        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id));
+    public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequestDto dto, Authentication authentication){
+        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id,authentication));
     }
 
     @DeleteMapping("/delete/{id}")

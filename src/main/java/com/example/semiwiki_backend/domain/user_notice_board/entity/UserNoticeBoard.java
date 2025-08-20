@@ -5,11 +5,13 @@ import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.type.UserNoticeBoardId;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

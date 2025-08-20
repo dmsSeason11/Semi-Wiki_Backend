@@ -3,7 +3,10 @@ package com.example.semiwiki_backend.domain.notice_board.entity;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,11 +49,9 @@ public class NoticeBoard {
     private List<String> categories = new ArrayList<>();
 
     public void addUserNotice(UserNoticeBoard userNoticeBoard) {
-        if(users == null) {
-            users = new ArrayList<>();
+        if(this.users == null) {
+            this.users = new ArrayList<>();
         }
-
-        users.add(userNoticeBoard);
-        userNoticeBoard.setNoticeBoard(this);
+        this.users.add(userNoticeBoard);
     }
 }

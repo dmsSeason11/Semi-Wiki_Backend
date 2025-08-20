@@ -1,5 +1,6 @@
 package com.example.semiwiki_backend.global.security.exception;
 
+import com.example.semiwiki_backend.global.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

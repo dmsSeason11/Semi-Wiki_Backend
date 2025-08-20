@@ -9,26 +9,31 @@ import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRe
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserLikeDeleteService {
     private final UserLikeRepository userLikeRepository;
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
 
-    public UserLikeDeleteService(UserLikeRepository userLikeRepository, NoticeBoardRepository noticeBoardRepository, UserRepository userRepository) {
-        this.userLikeRepository = userLikeRepository;
-        this.noticeBoardRepository = noticeBoardRepository;
-        this.userRepository = userRepository;
-    }
+    public void deleteLike(Authentication authentication, Integer boardId) {
+        //유저 아이디 jwt토큰에서 가져옴
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
 
-    public void deleteLike(Integer userId, Integer boardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(user, noticeBoard);
         if(userLike == null)
-            throw new NotLikedException("이미 좋아요를 해제한 상태입니다.");
+            throw new NotLikedException();
         userLikeRepository.delete(userLike);
     }
 }

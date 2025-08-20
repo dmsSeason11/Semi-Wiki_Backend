@@ -3,15 +3,12 @@ package com.example.semiwiki_backend.domain.user.controller;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.user.dto.response.UserMyPageResponseDto;
 import com.example.semiwiki_backend.domain.user.service.UserReadService;
-import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
