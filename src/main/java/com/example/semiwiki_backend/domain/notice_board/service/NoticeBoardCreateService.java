@@ -35,15 +35,8 @@ public class NoticeBoardCreateService {
     public NoticeBoardDetailResponseDto createNoticeBoard(NoticeBoardCreateRequestDto dto, Authentication authentication)
     {
         //유저 아이디 jwt토큰에서 가져옴
-        Integer userId = null;
-        try {
-            CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-            userId = userDetails.getId();
-        } catch (ExpiredJwtException e){
-            throw new JwtExpiredException();
-        } catch (Exception e) {
-            throw new JwtInvalidException();
-        }
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
 
         List<String> categories = dto.getCategories();
         if (categories == null || categories.isEmpty())

@@ -25,15 +25,9 @@ public class UserLikeReadSerivce {
 
     public Boolean isLike(Authentication authentication, Integer noticeBoardId) {
         //유저 아이디 jwt토큰에서 가져옴
-        Integer userId = null;
-        try {
-            CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-            userId = userDetails.getId();
-        } catch (ExpiredJwtException e){
-            throw new JwtExpiredException();
-        } catch (Exception e) {
-            throw new JwtInvalidException();
-        }
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+        
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(user, noticeBoard);

@@ -27,15 +27,9 @@ public class UserLikeCreateService {
     @Transactional
     public UserLike createLike(Authentication authentication, Integer boardId) {
         //유저 아이디 jwt토큰에서 가져옴
-        Integer userId;
-        try {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            userId = userDetails.getId();
-        } catch (ExpiredJwtException e){
-            throw new JwtExpiredException();
-        } catch (Exception e) {
-            throw new JwtInvalidException();
-        }
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()), noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException()));
 
         if(userLike != null)
