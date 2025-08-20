@@ -45,9 +45,9 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize->authorize
             .requestMatchers("/notice-board/post", "/notice-board/delete", "/notice-board/put").authenticated()
             .requestMatchers("/like/{board_id}/count").permitAll()
-            .requestMatchers("/like/**").authenticated()
-            .requestMatchers("/admin/**").hasRole("ADMIN")
-            .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+            .requestMatchers("/like/").authenticated()
+            .requestMatchers("/admin/").hasRole("ADMIN")
+            .requestMatchers("/user/").hasAnyRole("USER", "ADMIN")
             .anyRequest().permitAll())
         .build();
   }
