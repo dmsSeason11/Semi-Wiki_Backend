@@ -39,7 +39,7 @@ public class NoticeBoardGetService {
     }
 
     public List<NoticeBoardListResponseDto> getNoticeBoardListByCategories(List<String> categories, int offset, int limit) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesContaining(categories, PageRequest.of(offset, limit));
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByCategoriesAllMatch(categories, categories.size(), PageRequest.of(offset, limit));
         return getNoticeBoardListResponseDtos(noticeBoardList);
     }
 
@@ -56,7 +56,7 @@ public class NoticeBoardGetService {
     }
 
     public List<NoticeBoardListResponseDto> searchAndFindByCategoryNoticeBoards(String keyword, List<String> categories, int offset, int limit) {
-        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingAndCategoriesContaining(keyword, categories, PageRequest.of(offset, limit));
+        List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingAndCategoriesAllMatch(keyword, categories, categories.size(), PageRequest.of(offset, limit));
         return getNoticeBoardListResponseDtos(noticeBoardList);
     }
 
@@ -67,11 +67,13 @@ public class NoticeBoardGetService {
             List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
             for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
                 users.add(userNoticeBoard.getUser());
+
             int usersLength = users.size();
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
                     .userId(users.get(usersLength-1).getId())
                     .accountId(users.get(usersLength-1).getAccountId())
                     .build();
+
             noticeBoardListDto.add(NoticeBoardListResponseDto.builder()
                     .id(noticeBoard.getId())
                     .categories(noticeBoard.getCategories())

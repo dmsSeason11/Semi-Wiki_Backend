@@ -11,6 +11,8 @@ import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardDelet
 import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardGetService;
 import com.example.semiwiki_backend.domain.notice_board.service.NoticeBoardUpdateService;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +31,11 @@ public class NoticeBoardController {
     private final NoticeBoardDeleteService noticeBoardDeleteService;
 
     @PostMapping("/post")
-    public ResponseEntity<NoticeBoard> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto, Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
-        NoticeBoard noticeBoard = noticeBoardCreateService.createNoticeBoard(dto,userId);
-        if(noticeBoard == null)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(noticeBoard);
+    public ResponseEntity<NoticeBoardDetailResponseDto> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto, Authentication authentication) {
+        NoticeBoardDetailResponseDto noticeBoardDetailResponseDto = noticeBoardCreateService.createNoticeBoard(dto,authentication);
+        if(noticeBoardDetailResponseDto == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(noticeBoardDetailResponseDto);
     }
 
     @GetMapping("/{id}")
@@ -68,9 +68,13 @@ public class NoticeBoardController {
 
     @PutMapping("/put/{id}")
     public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequestDto dto, Authentication authentication){
-        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
-        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id,userId));
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+            Integer userId = userDetails.getId();
+        } catch (ExpiredJwtException e){
+            throw new JwtExpiredException();
+        }
+        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id,authentication));
     }
 
     @DeleteMapping("/delete/{id}")

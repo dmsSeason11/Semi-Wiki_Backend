@@ -6,6 +6,8 @@ import com.example.semiwiki_backend.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Builder
 @Getter
@@ -24,5 +26,6 @@ public class UserLike {
     @ManyToOne
     @JoinColumn(name = "notice_board_id")
     @JsonIgnoreProperties({"users", "password"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private NoticeBoard noticeBoard;
 }

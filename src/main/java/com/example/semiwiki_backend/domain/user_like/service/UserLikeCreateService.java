@@ -7,24 +7,35 @@ import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNot
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserLikeCreateService {
     private final UserLikeRepository userLikeRepository;
     private final UserRepository userRepository;
     private final NoticeBoardRepository noticeBoardRepository;
 
-    public UserLikeCreateService(UserLikeRepository userLikeRepository, UserRepository userRepository, NoticeBoardRepository noticeBoardRepository) {
-        this.userLikeRepository = userLikeRepository;
-        this.userRepository = userRepository;
-        this.noticeBoardRepository = noticeBoardRepository;
-    }
 
     @Transactional
-    public UserLike createLike(Integer userId, Integer boardId) {
-
+    public UserLike createLike(Authentication authentication, Integer boardId) {
+        //유저 아이디 jwt토큰에서 가져옴
+        Integer userId;
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            userId = userDetails.getId();
+        } catch (ExpiredJwtException e){
+            throw new JwtExpiredException();
+        } catch (Exception e) {
+            throw new JwtInvalidException();
+        }
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()), noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException()));
 
         if(userLike != null)

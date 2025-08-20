@@ -20,17 +20,13 @@ public class UserLikeController {
 
     @PostMapping("/{board_id}")
     public ResponseEntity<UserLike> postLike(@PathVariable int board_id, Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
-        UserLike userLike = userLikeCreateService.createLike(userId, board_id);
+        UserLike userLike = userLikeCreateService.createLike(authentication, board_id);
         return ResponseEntity.ok().body(userLike);
     }
 
     @GetMapping("/{board_id}")
     public ResponseEntity<Boolean> isLiked(@PathVariable int board_id,Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
-        return ResponseEntity.ok().body(userLikeReadSerivce.isLike(userId, board_id));
+        return ResponseEntity.ok().body(userLikeReadSerivce.isLike(authentication, board_id));
     }
 
     @GetMapping("/{board_id}/count")
@@ -40,9 +36,7 @@ public class UserLikeController {
 
     @DeleteMapping("/{board_id}")
     public ResponseEntity clearLike(@PathVariable int board_id,Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
-        userLikeDeleteService.deleteLike(userId, board_id);
+        userLikeDeleteService.deleteLike(authentication, board_id);
         return ResponseEntity.ok().build();
     }
 }

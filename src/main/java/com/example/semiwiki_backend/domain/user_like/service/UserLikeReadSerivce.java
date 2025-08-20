@@ -8,21 +8,32 @@ import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRe
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserLikeReadSerivce {
     private final UserLikeRepository userLikeRepository;
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
 
-    public UserLikeReadSerivce(UserLikeRepository userLikeRepository, NoticeBoardRepository noticeBoardRepository, UserRepository userRepository) {
-        this.userLikeRepository = userLikeRepository;
-        this.noticeBoardRepository = noticeBoardRepository;
-        this.userRepository = userRepository;
-    }
-
-    public Boolean isLike(Integer userId, Integer noticeBoardId) {
+    public Boolean isLike(Authentication authentication, Integer noticeBoardId) {
+        //유저 아이디 jwt토큰에서 가져옴
+        Integer userId = null;
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+            userId = userDetails.getId();
+        } catch (ExpiredJwtException e){
+            throw new JwtExpiredException();
+        } catch (Exception e) {
+            throw new JwtInvalidException();
+        }
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(user, noticeBoard);

@@ -10,7 +10,12 @@ import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +31,17 @@ public class NoticeBoardUpdateService {
 
 
     @Transactional
-    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Integer userId) {
+    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Authentication authentication) {
+        //유저 아이디 jwt토큰에서 가져옴
+        Integer userId = null;
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+            userId = userDetails.getId();
+        } catch (ExpiredJwtException e){
+            throw new JwtExpiredException();
+        } catch (Exception e) {
+            throw new JwtInvalidException();
+        }
         //user, noticeBoard 불러옴
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -66,6 +81,8 @@ public class NoticeBoardUpdateService {
                 .title(noticeBoard.getTitle())
                 .contents(noticeBoard.getContents())
                 .categories(noticeBoard.getCategories())
+                .createdAt(noticeBoard.getCreatedAt())
+                .modficatedAt(noticeBoard.getModficatedAt())
                 .users(users).build();
     }
 
