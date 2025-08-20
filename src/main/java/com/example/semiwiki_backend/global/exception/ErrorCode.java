@@ -17,7 +17,8 @@ public enum ErrorCode {
     NOTICE_BOARD_NOT_FOUND(HttpStatus.NOT_FOUND,"notice board not found"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"user not found"),
     ALREADY_LIKED(HttpStatus.BAD_REQUEST,"already_liked"),
-    NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked");
+    NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked"),
+    STUDENT_NUM_ALREADY_EXISTS(HttpStatus.CONFLICT,"student number already exists");
 
 
     private final HttpStatus httpStatus;
