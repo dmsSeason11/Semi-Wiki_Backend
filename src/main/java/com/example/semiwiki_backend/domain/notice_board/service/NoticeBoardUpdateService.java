@@ -44,8 +44,7 @@ public class NoticeBoardUpdateService {
 
         //유저가 기여했는지 확인, 기여 안된경우 기여한목록에 추가
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-        boolean userExists = userNoticeBoardList.stream() // user가 있는지 확인
-                .anyMatch(unt -> unt.getUser().getId() == user.getId());
+        boolean userExists = userNoticeBoardRepository.existsUserNoticeBoardByUserAndNoticeBoard(user,noticeBoard);
 
         if (!userExists) { // 없는경우에 실행
             UserNoticeBoard newUserNoticeBoard = userNoticeBoardRepository.save(
@@ -55,9 +54,7 @@ public class NoticeBoardUpdateService {
                             .build()
             );
         }
-
-        userNoticeBoardList.addAll(noticeBoard.getUsers());
-        NoticeBoard changingBoard = noticeBoardRepository.save(NoticeBoard.builder()
+        noticeBoardRepository.save(NoticeBoard.builder()
                 .title(dto.getTitle())
                 .id(noticeBoard.getId())
                 .categories(dto.getCategories())
