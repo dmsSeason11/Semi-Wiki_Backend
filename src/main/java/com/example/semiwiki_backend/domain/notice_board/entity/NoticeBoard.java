@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Getter
 @Builder
@@ -28,9 +29,6 @@ public class NoticeBoard {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String contents;
-
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -43,6 +41,10 @@ public class NoticeBoard {
     @JsonIgnoreProperties({"user"})
     private List<UserNoticeBoard> users = new ArrayList<>();
 
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn(name="notice_board_id")
+    private List<NoticeBoardHeader> noticeBoardHeaders = new ArrayList<>();
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "NoticeBoardCategory", joinColumns = @JoinColumn(name = "notice_board_id"))
     @Column(name = "category")
@@ -53,5 +55,10 @@ public class NoticeBoard {
             this.users = new ArrayList<>();
         }
         this.users.add(userNoticeBoard);
+    }
+
+    public void updateUserNoticeAndCategories(List<UserNoticeBoard> userNoticeBoard,List<String> categories) {
+        this.users = userNoticeBoard;
+        this.categories = categories;
     }
 }

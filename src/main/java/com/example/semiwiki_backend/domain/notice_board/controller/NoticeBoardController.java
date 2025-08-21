@@ -2,7 +2,7 @@ package com.example.semiwiki_backend.domain.notice_board.controller;
 
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardHeaderUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.service.*;
@@ -20,7 +20,7 @@ import java.util.List;
 public class NoticeBoardController {
     private final NoticeBoardCreateService noticeBoardCreateService;
     private final NoticeBoardGetDetailService noticeBoardGetDetailService;
-    private final NoticeBoardUpdateService noticeBoardUpdateService;
+    private final NoticeBoardHeaderUpdateService noticeBoardHeaderUpdateService;
     private final NoticeBoardDeleteService noticeBoardDeleteService;
     private final NoticeBoardGetListService noticeBoardGetListService;
 
@@ -43,8 +43,8 @@ public class NoticeBoardController {
     }
 
     @PutMapping("/put/{id}")
-    public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardUpdateRequestDto dto, Authentication authentication){
-        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id,authentication));
+    public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardHeaderUpdateRequestDto dto, Authentication authentication){
+        return ResponseEntity.ok().body(noticeBoardHeaderUpdateService.updateNoticeBoard(dto,id,authentication));
     }
 
     @DeleteMapping("/delete/{id}")
