@@ -1,15 +1,12 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
-import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
-import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,7 +27,7 @@ public class NoticeBoardGetDetailService {
 
         return NoticeBoardDetailResponseDto.builder()
                 .title(noticeBoard.getTitle())
-                .contents(noticeBoard.getContents())
+                .noticeBoardHeaders(noticeBoard.getNoticeBoardHeaders())
                 .createdAt(noticeBoard.getCreatedAt())
                 .modficatedAt(noticeBoard.getModficatedAt())
                 .users(users)

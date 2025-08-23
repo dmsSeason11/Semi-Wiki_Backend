@@ -17,7 +17,9 @@ public enum ErrorCode {
     NOTICE_BOARD_NOT_FOUND(HttpStatus.NOT_FOUND,"notice board not found"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"user not found"),
     ALREADY_LIKED(HttpStatus.BAD_REQUEST,"already_liked"),
-    NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked");
+    NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked"),
+    HEADER_NOT_FOUND(HttpStatus.NOT_FOUND,"header not found"),
+    NO_HEADER(HttpStatus.BAD_REQUEST,"no header");
 
 
     private final HttpStatus httpStatus;
