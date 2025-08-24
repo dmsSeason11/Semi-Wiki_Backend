@@ -85,7 +85,8 @@ public class JwtTokenProvider{
 
   // 리프레시 토큰 유효성 검사
   // 유효성 검사 시 리프레시 토큰이 만료되었다면 로그인 화면으로 이동
-  public boolean validateRefreshToken(String accountId,String refreshToken) {
+  //반환 값을 void로 해서 reissueAccessToken 에서 if문 하나를 없애고 사용
+  private boolean validateRefreshToken(String accountId,String refreshToken) {
 
     String key = REDIS_PREFIX + accountId;
     String storedRefreshToken = redisTemplate.opsForValue().get(key);

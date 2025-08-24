@@ -4,7 +4,6 @@ import com.example.semiwiki_backend.domain.auth.dto.ReissueRequest;
 import com.example.semiwiki_backend.domain.auth.dto.TokenResponse;
 import com.example.semiwiki_backend.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.exec.spi.StandardEntityInstanceResolver;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +12,7 @@ public class ReissueService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public TokenResponse execute(ReissueRequest  reissueRequest) {
+    public TokenResponse execute(ReissueRequest reissueRequest) {
 
         String accountId = reissueRequest.getAccountId();
         String refreshToken = reissueRequest.getRefreshToken();
