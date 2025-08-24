@@ -3,7 +3,6 @@ package com.example.semiwiki_backend.domain.auth.service;
 import com.example.semiwiki_backend.domain.auth.dto.SignUpRequest;
 import com.example.semiwiki_backend.domain.auth.dto.TokenResponse;
 import com.example.semiwiki_backend.domain.auth.exception.AccountAlreadyExistsException;
-import com.example.semiwiki_backend.domain.auth.exception.StudentNumAlreadyExistsException;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.global.security.auth.Role;
@@ -26,9 +25,6 @@ public class SignUpService {
     public TokenResponse execute(SignUpRequest signUpRequest) {
         if(userRepository.existsByAccountId(signUpRequest.getAccountId())) {
             throw new AccountAlreadyExistsException();
-    }
-        if(userRepository.existsByStudentNum(signUpRequest.getStudentNum())) {
-            throw new StudentNumAlreadyExistsException();
         }
 
         User user=User.builder()
