@@ -1,9 +1,12 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardHeaderUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
+import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
+import com.example.semiwiki_backend.domain.notice_board.exception.HeaderNotFoundException;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
+import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
@@ -11,9 +14,6 @@ import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
-import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
-import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -24,14 +24,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NoticeBoardUpdateService {
+public class NoticeBoardHeaderUpdateService {
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
+    private final NoticeBoardHeaderRepository noticeBoardHeaderRepository;
 
 
     @Transactional
-    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Authentication authentication) {
+    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardHeaderUpdateRequestDto dto, Integer id, Authentication authentication ) {
         //유저 아이디 jwt토큰에서 가져옴
         CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
         Integer userId = userDetails.getId();
@@ -44,8 +45,7 @@ public class NoticeBoardUpdateService {
 
         //유저가 기여했는지 확인, 기여 안된경우 기여한목록에 추가
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-        boolean userExists = userNoticeBoardList.stream() // user가 있는지 확인
-                .anyMatch(unt -> unt.getUser().getId() == user.getId());
+        boolean userExists = userNoticeBoardRepository.existsUserNoticeBoardByUserAndNoticeBoard(user,noticeBoard);
 
         if (!userExists) { // 없는경우에 실행
             UserNoticeBoard newUserNoticeBoard = userNoticeBoardRepository.save(
@@ -54,17 +54,14 @@ public class NoticeBoardUpdateService {
                             .noticeBoard(noticeBoard)
                             .build()
             );
+            userNoticeBoardList.add(newUserNoticeBoard);
         }
+        NoticeBoardHeader noticeBoardHeader = noticeBoardHeaderRepository.findById(dto.getHeaderId()).orElseThrow(() -> new HeaderNotFoundException());
+        noticeBoardHeader.updateHeaderContents(dto.getContents(), dto.getTitle());
+        noticeBoardHeaderRepository.save(noticeBoardHeader);
 
-        userNoticeBoardList.addAll(noticeBoard.getUsers());
-        NoticeBoard changingBoard = noticeBoardRepository.save(NoticeBoard.builder()
-                .title(dto.getTitle())
-                .id(noticeBoard.getId())
-                .categories(dto.getCategories())
-                .contents(dto.getContents())
-                .createdAt(noticeBoard.getCreatedAt())
-                .modficatedAt(noticeBoard.getModficatedAt())
-                .users(userNoticeBoardList).build());
+        noticeBoard.updateUserNoticeAndCategories(userNoticeBoardList,dto.getCategories());
+        noticeBoardRepository.save(noticeBoard);
 
         //반환용
         List<User> users = new ArrayList<>();
@@ -73,7 +70,7 @@ public class NoticeBoardUpdateService {
 
         return NoticeBoardDetailResponseDto.builder()
                 .title(noticeBoard.getTitle())
-                .contents(noticeBoard.getContents())
+                .noticeBoardHeaders(noticeBoard.getNoticeBoardHeaders())
                 .categories(noticeBoard.getCategories())
                 .createdAt(noticeBoard.getCreatedAt())
                 .modficatedAt(noticeBoard.getModficatedAt())
