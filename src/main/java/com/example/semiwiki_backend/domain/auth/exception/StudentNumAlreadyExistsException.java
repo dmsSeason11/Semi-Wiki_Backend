@@ -1,9 +1,9 @@
 package com.example.semiwiki_backend.domain.auth.exception;
 
 import com.example.semiwiki_backend.global.exception.ErrorCode;
-import lombok.Getter;
 
-@Getter
+
+
 public class StudentNumAlreadyExistsException extends RuntimeException {
     private final ErrorCode errorCode;
     public StudentNumAlreadyExistsException() {
