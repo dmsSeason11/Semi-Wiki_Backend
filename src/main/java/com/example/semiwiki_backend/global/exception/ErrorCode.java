@@ -18,6 +18,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"user not found"),
     ALREADY_LIKED(HttpStatus.BAD_REQUEST,"already_liked"),
     NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked"),
+    STUDENT_NUM_ALREADY_EXISTS(HttpStatus.CONFLICT,"student number already exists"),
     HEADER_NOT_FOUND(HttpStatus.NOT_FOUND,"header not found"),
     NO_HEADER(HttpStatus.BAD_REQUEST,"no header");
 
