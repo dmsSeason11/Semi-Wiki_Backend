@@ -48,8 +48,7 @@ public class JwtTokenProvider{
 
     String refreshToken = generateToken(accountId,REFRESH_TOKEN,jwtProperties.getRefreshTokenExpiresIn());
     String key = REDIS_PREFIX + accountId;
-    redisTemplate.opsForValue()
-            .set(key, refreshToken, jwtProperties.getRefreshTokenExpiresIn(), TimeUnit.MILLISECONDS);
+    redisTemplate.opsForValue().set(key, refreshToken, jwtProperties.getRefreshTokenExpiresIn(), TimeUnit.MILLISECONDS);
     return refreshToken;
   }
 
@@ -58,6 +57,7 @@ public class JwtTokenProvider{
     Date now = new Date();
     return Jwts.builder()
         .signWith(SignatureAlgorithm.HS256,secretKey)
+        .claim("type",type)
         .setSubject(accountId)
         .setIssuedAt(now)
         .setExpiration(new Date(now.getTime()+time))
@@ -85,7 +85,7 @@ public class JwtTokenProvider{
 
   // 리프레시 토큰 유효성 검사
   // 유효성 검사 시 리프레시 토큰이 만료되었다면 로그인 화면으로 이동
-  public boolean validateRefreshToken(String accountId,String refreshToken) {
+  public void validateRefreshToken(String accountId,String refreshToken) {
 
     String key = REDIS_PREFIX + accountId;
     String storedRefreshToken = redisTemplate.opsForValue().get(key);
@@ -94,15 +94,16 @@ public class JwtTokenProvider{
 
     if(!refreshToken.equals(storedRefreshToken)) throw new JwtInvalidException();
 
-    return validateToken(refreshToken);
+    validateToken(refreshToken);
+
   }
 
   //AccessToken 재발급
   public String reissueAccessToken(String accountId,String refreshToken) {
-    if(validateRefreshToken(accountId,refreshToken)){
-      return generateAccessToken(accountId);
-    }
-    throw new JwtInvalidException();
+
+    validateRefreshToken(accountId,refreshToken);
+
+    return generateAccessToken(accountId);
   }
 
   //로그아웃
