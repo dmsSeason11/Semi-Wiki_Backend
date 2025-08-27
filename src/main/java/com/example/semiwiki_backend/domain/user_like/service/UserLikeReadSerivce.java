@@ -8,29 +8,34 @@ import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRe
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserLikeReadSerivce {
     private final UserLikeRepository userLikeRepository;
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
 
-    public UserLikeReadSerivce(UserLikeRepository userLikeRepository, NoticeBoardRepository noticeBoardRepository, UserRepository userRepository) {
-        this.userLikeRepository = userLikeRepository;
-        this.noticeBoardRepository = noticeBoardRepository;
-        this.userRepository = userRepository;
-    }
-
-    public Boolean isLike(Integer userId, Integer noticeBoardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을 수 없습니다."));
+    public Boolean isLike(Authentication authentication, Integer noticeBoardId) {
+        //유저 아이디 jwt토큰에서 가져옴
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+        
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(user, noticeBoard);
         return userLike != null;
     }
 
     public Integer countAllLikes(Integer boardId) {
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을수 없습니다."));
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException());
         return userLikeRepository.countAllByNoticeBoard(noticeBoard);
     }
 }

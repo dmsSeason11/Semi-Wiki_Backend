@@ -1,9 +1,9 @@
 package com.example.semiwiki_backend.domain.auth.exception;
 
-import com.example.semiwiki_backend.global.security.exception.ErrorCode;
-import lombok.Getter;
+import com.example.semiwiki_backend.global.exception.ErrorCode;
 
-@Getter
+
+
 public class IncorrectPasswordException extends RuntimeException {
 
   private final ErrorCode errorCode;

@@ -1,21 +1,18 @@
 package com.example.semiwiki_backend.domain.notice_board.dto.response;
 
+import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class NoticeBoardDetailResponseDto {
     private String title;
-
-    private String contents;
 
     private LocalDateTime createdAt;
 
@@ -25,4 +22,6 @@ public class NoticeBoardDetailResponseDto {
     private List<User> users;
 
     private List<String> categories;
+
+    private List<NoticeBoardHeader> noticeBoardHeaders;
 }

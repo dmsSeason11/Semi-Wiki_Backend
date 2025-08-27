@@ -7,32 +7,37 @@ import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNot
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
+import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
+import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
+import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
+import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserLikeCreateService {
     private final UserLikeRepository userLikeRepository;
     private final UserRepository userRepository;
     private final NoticeBoardRepository noticeBoardRepository;
 
-    public UserLikeCreateService(UserLikeRepository userLikeRepository, UserRepository userRepository, NoticeBoardRepository noticeBoardRepository) {
-        this.userLikeRepository = userLikeRepository;
-        this.userRepository = userRepository;
-        this.noticeBoardRepository = noticeBoardRepository;
-    }
 
     @Transactional
-    public UserLike createLike(Integer userId, Integer boardId) {
+    public UserLike createLike(Authentication authentication, Integer boardId) {
+        //유저 아이디 jwt토큰에서 가져옴
+        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Integer userId = userDetails.getId();
 
-        UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾지 못했습니다.")), noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을수 없습니다.")));
+        UserLike userLike = userLikeRepository.findByUserAndNoticeBoard(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()), noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException()));
 
         if(userLike != null)
-            throw new AlreadyLikedException("이미 좋아요를 눌렀습니다.");
+            throw new AlreadyLikedException();
 
         return userLikeRepository.save(UserLike.builder()
-                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("유저를 찾지 못했습니다.")))
-                .noticeBoard(noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException("게시판을 찾을수 없습니다.")))
+                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()))
+                .noticeBoard(noticeBoardRepository.findById(boardId).orElseThrow(() -> new NoticeBoardNotFoundException()))
                 .build());
     }
 }
