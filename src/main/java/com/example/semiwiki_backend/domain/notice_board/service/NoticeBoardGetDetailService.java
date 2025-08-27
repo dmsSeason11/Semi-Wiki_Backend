@@ -31,6 +31,7 @@ public class NoticeBoardGetDetailService {
                 .createdAt(noticeBoard.getCreatedAt())
                 .modficatedAt(noticeBoard.getModficatedAt())
                 .users(users)
+                .contents(noticeBoard.getContents())
                 .categories(noticeBoard.getCategories())
                 .build();
     }
