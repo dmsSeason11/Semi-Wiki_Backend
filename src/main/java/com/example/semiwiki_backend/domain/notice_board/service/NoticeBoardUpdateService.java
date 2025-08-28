@@ -1,11 +1,11 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardHeaderUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoHeaderException;
+import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
@@ -23,10 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-
 @Service
 @RequiredArgsConstructor
-public class NoticeBoardCreateService {
+public class NoticeBoardUpdateService {
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
@@ -34,51 +33,54 @@ public class NoticeBoardCreateService {
 
 
     @Transactional
-    public NoticeBoardDetailResponseDto createNoticeBoard(NoticeBoardCreateRequestDto dto, Authentication authentication)
-    {
+    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardHeaderUpdateRequestDto dto, Integer id, Authentication authentication ) {
         //유저 아이디 jwt토큰에서 가져옴
         CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
         Integer userId = userDetails.getId();
 
-        List<String> categories = dto.getCategories();
-        if (categories == null || categories.isEmpty())
-            throw new NoCategoryException();
+        //user, noticeBoard 불러옴
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(id)
+                .orElseThrow(() -> new NoticeBoardNotFoundException());
+
+        //유저가 기여했는지 확인, 기여 안된경우 기여한목록에 추가
+        List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
+        boolean userExists = userNoticeBoardRepository.existsUserNoticeBoardByUserAndNoticeBoard(user,noticeBoard);
+
+        if (!userExists) { // 없는경우에 실행
+            UserNoticeBoard newUserNoticeBoard = userNoticeBoardRepository.save(
+                    UserNoticeBoard.builder()
+                            .user(user)
+                            .noticeBoard(noticeBoard)
+                            .build()
+            );
+            userNoticeBoardList.add(newUserNoticeBoard);
+        }
+
         List<NoticeBoardHeader> headers = parseMarkdownToHeaders(dto.getContents());
         if(headers == null)
             throw new NoHeaderException();
 
-        //noticeBoard 저장
-        NoticeBoard noticeBoard = noticeBoardRepository.save(NoticeBoard.builder()
-                .title(dto.getTitle())
-                .categories(categories)
-                .noticeBoardHeaders(headers)
-                        .contents(dto.getContents())
-                .build());
+        noticeBoard.updateHeaderEmpty();
+        noticeBoard.updateNoticeBoard(headers,userNoticeBoardList,dto.getTitle(),dto.getContents()
+                ,dto.getCategories());
 
-        //UserNoticeTable에 관계 저장
-        UserNoticeBoard userNoticeBoard = UserNoticeBoard.builder()
-                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException()))
-                .noticeBoard(noticeBoard).build();
-        userNoticeBoardRepository.save(userNoticeBoard);
-        //noticeBoard에도 바뀐것 저장
-        noticeBoard.addUserNotice(userNoticeBoard);
+        noticeBoardRepository.save(noticeBoard);
 
-        //반환 위해서 유저 리스트 만듬
+        //반환용
         List<User> users = new ArrayList<>();
-        for (UserNoticeBoard userNotice : noticeBoard.getUsers())
+        for (UserNoticeBoard userNotice : userNoticeBoardList)
             users.add(userNotice.getUser());
 
-        //반환은 detail로
         return NoticeBoardDetailResponseDto.builder()
                 .title(noticeBoard.getTitle())
                 .noticeBoardHeaders(noticeBoard.getNoticeBoardHeaders())
-                .createdAt(noticeBoard.getCreatedAt())
-                .contents(noticeBoard.getContents())
-                .modficatedAt(noticeBoard.getModficatedAt())
-                .users(users)
                 .categories(noticeBoard.getCategories())
-                .noticeBoardHeaders(noticeBoard.getNoticeBoardHeaders())
-                .build();
+                .createdAt(noticeBoard.getCreatedAt())
+                .modficatedAt(noticeBoard.getModficatedAt())
+                .contents(noticeBoard.getContents())
+                .users(users).build();
     }
 
     private List<NoticeBoardHeader> parseMarkdownToHeaders(String contents) {

@@ -20,7 +20,7 @@ import java.util.List;
 public class NoticeBoardController {
     private final NoticeBoardCreateService noticeBoardCreateService;
     private final NoticeBoardGetDetailService noticeBoardGetDetailService;
-    private final NoticeBoardHeaderUpdateService noticeBoardHeaderUpdateService;
+    private final NoticeBoardUpdateService noticeBoardUpdateService;
     private final NoticeBoardDeleteService noticeBoardDeleteService;
     private final NoticeBoardGetListService noticeBoardGetListService;
 
@@ -44,7 +44,7 @@ public class NoticeBoardController {
 
     @PutMapping("/put/{id}")
     public ResponseEntity<NoticeBoardDetailResponseDto> updateNoticeBoard(@PathVariable Integer id, @RequestBody NoticeBoardHeaderUpdateRequestDto dto, Authentication authentication){
-        return ResponseEntity.ok().body(noticeBoardHeaderUpdateService.updateNoticeBoard(dto,id,authentication));
+        return ResponseEntity.ok().body(noticeBoardUpdateService.updateNoticeBoard(dto,id,authentication));
     }
 
     @DeleteMapping("/delete/{id}")

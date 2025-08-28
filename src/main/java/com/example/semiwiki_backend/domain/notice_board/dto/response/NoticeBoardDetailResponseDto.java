@@ -14,6 +14,8 @@ import java.util.List;
 public class NoticeBoardDetailResponseDto {
     private String title;
 
+    private String contents;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime modficatedAt;
