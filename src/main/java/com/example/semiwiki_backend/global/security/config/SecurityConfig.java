@@ -66,6 +66,7 @@ public class SecurityConfig {
     ));
 
     configuration.setAllowedHeaders(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("Content-Type")); // 허용할 헤더
     configuration.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
