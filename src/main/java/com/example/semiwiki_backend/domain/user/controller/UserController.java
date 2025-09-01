@@ -1,5 +1,6 @@
 package com.example.semiwiki_backend.domain.user.controller;
 
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCountRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.user.dto.response.UserMyPageResponseDto;
@@ -23,10 +24,16 @@ public class UserController {
 
     @GetMapping("{accountId}/list")
     public ResponseEntity<List<NoticeBoardListResponseDto>> getUserNoticeBoardList(@PathVariable String accountId, @RequestBody NoticeBoardListDto noticeBoardListDto) {
+        System.out.println("dto : " + noticeBoardListDto.getKeyword() + noticeBoardListDto.getCategories()+ noticeBoardListDto.getOffset()+ noticeBoardListDto.getLimit());
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = userReadService.GetNoticeBoardsFromUser(accountId, noticeBoardListDto);
+        System.out.println("noticeBoardListResponseDto: " + noticeBoardListResponseDtos);
         if(noticeBoardListResponseDtos == null || noticeBoardListResponseDtos.isEmpty()){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(noticeBoardListResponseDtos);
+    }
+    @GetMapping("{accountId}/count")
+    public ResponseEntity<Long> getUserCount(@PathVariable String accountId, @RequestBody NoticeBoardCountRequestDto noticeBoardCountRequestDto) {
+        return ResponseEntity.ok().body(userReadService.GetNoticeBoardCount(accountId, noticeBoardCountRequestDto));
     }
 }

@@ -22,11 +22,16 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     SELECT n 
     FROM UserNoticeBoard unb
     JOIN unb.noticeBoard n
-    JOIN n.categories c
     WHERE unb.user.accountId = :accountId
-    AND c IN :categories
-    GROUP BY n
-    HAVING COUNT(DISTINCT c) = :categoryCount
+    AND n.id IN (
+        SELECT nb.id 
+        FROM NoticeBoard nb
+        JOIN nb.categories c
+        WHERE c IN :categories
+        GROUP BY nb.id
+        HAVING COUNT(DISTINCT c) = :categoryCount
+    )
+    ORDER BY n.createdAt DESC
 """)
     List<NoticeBoard> findByUserAndCategoriesAllMatch(
             @Param("accountId") String accountId,
@@ -42,6 +47,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     JOIN unb.noticeBoard n
     WHERE unb.user.accountId = :accountId
     AND LOWER(n.title) LIKE LOWER(CONCAT('%', :title, '%'))
+    ORDER BY n.createdAt DESC
 """)
     List<NoticeBoard> findByUserAndTitleContainingIgnoreCase(
             @Param("accountId") String accountId,
@@ -54,12 +60,17 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     SELECT n
     FROM UserNoticeBoard unb
     JOIN unb.noticeBoard n
-    JOIN n.categories c
     WHERE unb.user.accountId = :accountId
     AND LOWER(n.title) LIKE LOWER(CONCAT('%', :title, '%'))
-    AND c IN :categories
-    GROUP BY n
-    HAVING COUNT(DISTINCT c) = :categoryCount
+    AND n.id IN (
+        SELECT nb.id 
+        FROM NoticeBoard nb
+        JOIN nb.categories c
+        WHERE c IN :categories
+        GROUP BY nb.id
+        HAVING COUNT(DISTINCT c) = :categoryCount
+    )
+    ORDER BY n.createdAt DESC
 """)
     List<NoticeBoard> findByUserAndTitleContainingAndCategoriesAllMatch(
             @Param("accountId") String accountId,
@@ -82,14 +93,14 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 5. 좋아요 수 내림차순 + 특정 유저
+    // 5. 좋아요 수 내림차순 + 특정 유저 (JPQL)
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
     JOIN unb.noticeBoard n
-    LEFT JOIN UserLike ul ON ul.noticeBoard = n
+    LEFT JOIN UserLike ul ON ul.noticeBoard.id = n.id
     WHERE unb.user.accountId = :accountId
-    GROUP BY n
+    GROUP BY n.id
     ORDER BY COUNT(ul) DESC, n.createdAt DESC
 """)
     List<NoticeBoard> findAllByUserOrderByLikeCountDescThenCreatedAtDesc(
@@ -102,12 +113,17 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     SELECT n
     FROM UserNoticeBoard unb
     JOIN unb.noticeBoard n
-    JOIN n.categories c
-    LEFT JOIN UserLike ul ON ul.noticeBoard = n
+    LEFT JOIN UserLike ul ON ul.noticeBoard.id = n.id
     WHERE unb.user.accountId = :accountId
-    AND c IN :categories
-    GROUP BY n
-    HAVING COUNT(DISTINCT c) = :categoryCount
+    AND n.id IN (
+        SELECT nb.id 
+        FROM NoticeBoard nb
+        JOIN nb.categories c
+        WHERE c IN :categories
+        GROUP BY nb.id
+        HAVING COUNT(DISTINCT c) = :categoryCount
+    )
+    GROUP BY n.id
     ORDER BY COUNT(ul) DESC, n.createdAt DESC
 """)
     List<NoticeBoard> findByUserAndCategoriesAllMatchOrderByLikeCountDesc(
@@ -122,10 +138,10 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     SELECT n
     FROM UserNoticeBoard unb
     JOIN unb.noticeBoard n
-    LEFT JOIN UserLike ul ON ul.noticeBoard = n
+    LEFT JOIN UserLike ul ON ul.noticeBoard.id = n.id
     WHERE unb.user.accountId = :accountId
     AND LOWER(n.title) LIKE LOWER(CONCAT('%', :title, '%'))
-    GROUP BY n
+    GROUP BY n.id
     ORDER BY COUNT(ul) DESC, n.createdAt DESC
 """)
     List<NoticeBoard> findByUserAndTitleContainingIgnoreCaseOrderByLikeCountDesc(
@@ -139,13 +155,18 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     SELECT n
     FROM UserNoticeBoard unb
     JOIN unb.noticeBoard n
-    JOIN n.categories c
-    LEFT JOIN UserLike ul ON ul.noticeBoard = n
+    LEFT JOIN UserLike ul ON ul.noticeBoard.id = n.id
     WHERE unb.user.accountId = :accountId
     AND LOWER(n.title) LIKE LOWER(CONCAT('%', :title, '%'))
-    AND c IN :categories
-    GROUP BY n
-    HAVING COUNT(DISTINCT c) = :categoryCount
+    AND n.id IN (
+        SELECT nb.id 
+        FROM NoticeBoard nb
+        JOIN nb.categories c
+        WHERE c IN :categories
+        GROUP BY nb.id
+        HAVING COUNT(DISTINCT c) = :categoryCount
+    )
+    GROUP BY n.id
     ORDER BY COUNT(ul) DESC, n.createdAt DESC
 """)
     List<NoticeBoard> findByUserAndTitleContainingAndCategoriesOrderByLikeCountDesc(
@@ -154,6 +175,79 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             @Param("categories") List<String> categories,
             @Param("categoryCount") long categoryCount,
             Pageable pageable
+    );
+
+    //여기부터 count(건들지 마)
+
+    // 또는 더 간단한 방법:
+    @Query("""
+SELECT COUNT(DISTINCT n.id) 
+FROM UserNoticeBoard unb
+JOIN unb.noticeBoard n
+JOIN n.categories c
+WHERE unb.user.accountId = :accountId
+  AND c IN :categories
+  AND n.id IN (
+    SELECT n2.id
+    FROM NoticeBoard n2
+    JOIN n2.categories c2
+    WHERE c2 IN :categories
+    GROUP BY n2.id
+    HAVING COUNT(DISTINCT c2) = :categoryCount
+  )
+""")
+    Long countByUserAndCategoriesAllMatch(
+            @Param("accountId") String accountId,
+            @Param("categories") List<String> categories,
+            @Param("categoryCount") long categoryCount
+    );
+
+    // 2. 제목 검색 + 특정 유저 (이건 맞음)
+    @Query("""
+SELECT COUNT(DISTINCT n)
+FROM UserNoticeBoard unb
+JOIN unb.noticeBoard n
+WHERE unb.user.accountId = :accountId
+  AND LOWER(n.title) LIKE LOWER(CONCAT('%', :title, '%'))
+""")
+    Long countByUserAndTitleContainingIgnoreCase(
+            @Param("accountId") String accountId,
+            @Param("title") String title
+    );
+
+    // 3. 제목 + 카테고리 모두 일치 + 특정 유저 (수정 필요)
+    @Query("""
+SELECT COUNT(DISTINCT n.id) 
+FROM UserNoticeBoard unb
+JOIN unb.noticeBoard n
+JOIN n.categories c
+WHERE unb.user.accountId = :accountId
+  AND LOWER(n.title) LIKE LOWER(CONCAT('%', :title, '%'))
+  AND n.id IN (
+    SELECT n2.id
+    FROM NoticeBoard n2
+    JOIN n2.categories c2
+    WHERE c2 IN :categories
+    GROUP BY n2.id
+    HAVING COUNT(DISTINCT c2) = :categoryCount
+  )
+""")
+    Long countByUserAndTitleContainingAndCategoriesAllMatch(
+            @Param("accountId") String accountId,
+            @Param("title") String title,
+            @Param("categories") List<String> categories,
+            @Param("categoryCount") long categoryCount
+    );
+
+    // 4. 특정 유저의 전체 글 개수 (이건 맞음)
+    @Query("""
+SELECT COUNT(DISTINCT n)
+FROM UserNoticeBoard unb
+JOIN unb.noticeBoard n
+WHERE unb.user.accountId = :accountId
+""")
+    Long countAllByUser(
+            @Param("accountId") String accountId
     );
 }
 

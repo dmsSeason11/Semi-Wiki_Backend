@@ -1,5 +1,6 @@
 package com.example.semiwiki_backend.domain.user.service;
 
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCountRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
@@ -55,7 +56,8 @@ public class UserReadService {
                     noticeBoards = userNoticeBoardRepository.findAllByUserOrderByCreatedAtDesc(accountId, PageRequest.of(offset, limit));
                 }
                 //검색 키워드만 있는경우
-                noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingIgnoreCase(accountId, keyword,PageRequest.of(offset, limit));
+                else
+                    noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingIgnoreCase(accountId, keyword,PageRequest.of(offset, limit));
             }
             //카테고리만 있는경우
             else if(keyword == null || keyword.isEmpty()){
@@ -64,7 +66,6 @@ public class UserReadService {
             else{
                 noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingAndCategoriesAllMatch(accountId,keyword, categories, categories.size(), PageRequest.of(offset, limit));
             }
-            //둘 다 있는 경우
 
         }
         else if(dto.getOrderBy().equals("like")){
@@ -73,8 +74,9 @@ public class UserReadService {
                 if(keyword == null || keyword.isEmpty()){
                     noticeBoards = userNoticeBoardRepository.findAllByUserOrderByLikeCountDescThenCreatedAtDesc(accountId,PageRequest.of(offset, limit));
                 }
+                else
                 //검색 키워드만 있는경우
-                noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingIgnoreCaseOrderByLikeCountDesc(accountId,keyword,PageRequest.of(offset, limit));
+                    noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingIgnoreCaseOrderByLikeCountDesc(accountId,keyword,PageRequest.of(offset, limit));
             }
             //카테고리만 있는경우
             else if(keyword == null || keyword.isEmpty()){
@@ -83,11 +85,11 @@ public class UserReadService {
             else {
                 noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingAndCategoriesOrderByLikeCountDesc(accountId, keyword, categories, categories.size(), PageRequest.of(offset, limit));
             }
-            //둘 다 있는 경우
 
         }
         else
             throw new IncorrectOrderByException();
+        System.out.println("noticeBoards: " + noticeBoards);
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = new ArrayList<>();
         for (NoticeBoard noticeBoard : noticeBoards) {
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
@@ -104,8 +106,23 @@ public class UserReadService {
 
             noticeBoardListResponseDtos.add(noticeBoardListResponseDto);
         }
-
+        System.out.println("noticeBoardListResponseDtos: " + noticeBoardListResponseDtos);
         return noticeBoardListResponseDtos;
 
+    }
+
+    public Long GetNoticeBoardCount(String accountId, NoticeBoardCountRequestDto requestDto) {
+        final String title = requestDto.getTitle();
+        final List<String> categories = requestDto.getCategories();
+        if(title == null) {
+            if (categories == null)
+                return userNoticeBoardRepository.countAllByUser(accountId);
+
+            return userNoticeBoardRepository.countByUserAndCategoriesAllMatch(accountId,categories, categories.size());
+        }
+        if(categories == null)
+            return userNoticeBoardRepository.countByUserAndTitleContainingIgnoreCase(accountId,title);
+
+        return userNoticeBoardRepository.countByUserAndTitleContainingAndCategoriesAllMatch(accountId, title,categories, categories.size());
     }
 }

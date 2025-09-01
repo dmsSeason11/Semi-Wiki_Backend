@@ -39,7 +39,7 @@ public class NoticeBoard {
     @Column(name = "modificated_at")
     private LocalDateTime modficatedAt;
 
-    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"user"})
     private List<UserNoticeBoard> users = new ArrayList<>();
 
