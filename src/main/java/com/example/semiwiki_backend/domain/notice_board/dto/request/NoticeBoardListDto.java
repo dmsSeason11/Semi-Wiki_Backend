@@ -10,6 +10,8 @@ public class NoticeBoardListDto {
 
     private String keyword;
 
+    private String orderBy = "recent";
+
     private int offset = 0;
 
     private int limit = 20;

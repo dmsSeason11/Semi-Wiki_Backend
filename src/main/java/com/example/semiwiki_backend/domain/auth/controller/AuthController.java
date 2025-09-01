@@ -23,16 +23,16 @@ public class AuthController {
     private final CheckAccountIdService checkAccountIdService;
     private final ReissueService reissueService;
     private final LogoutService logoutService;
-    private final UserRepository userRepository;
 
 
-    @PostMapping("/sign-up")
+
+    @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public TokenResponse signUp(@RequestBody SignUpRequest signUpRequest) {
         return signUpService.execute(signUpRequest);
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/signin")
     @ResponseStatus(HttpStatus.OK)
     public TokenResponse signIn(@RequestBody SignInRequest signInRequest) {
         return signInService.execute(signInRequest);
@@ -40,7 +40,7 @@ public class AuthController {
 
     //true = 사용 가능, false = 사용 불가(이미 존재)
     //수정 필요 account-id
-    @GetMapping("/check-accountId")
+    @GetMapping("/checkaccountid")
     @ResponseStatus(HttpStatus.OK)
     public boolean checkAccountId(@RequestParam String accountId) {
         return checkAccountIdService.execute(accountId);

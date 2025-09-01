@@ -1,5 +1,6 @@
 package com.example.semiwiki_backend.domain.notice_board.controller;
 
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCountRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardHeaderUpdateRequestDto;
@@ -23,6 +24,7 @@ public class NoticeBoardController {
     private final NoticeBoardUpdateService noticeBoardUpdateService;
     private final NoticeBoardDeleteService noticeBoardDeleteService;
     private final NoticeBoardGetListService noticeBoardGetListService;
+    private final NoticeBoardGetCountService noticeBoardGetCountService;
 
     @PostMapping("/post")
     public ResponseEntity<NoticeBoardDetailResponseDto> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto, Authentication authentication) {
@@ -51,5 +53,10 @@ public class NoticeBoardController {
     public ResponseEntity deleteNoticeBoard(@PathVariable Integer id){
         noticeBoardDeleteService.deleteNotice(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countNoticeBoard(@RequestBody NoticeBoardCountRequestDto dto){
+        return ResponseEntity.ok().body(noticeBoardGetCountService.noticeBoardGetCount(dto));
     }
 }
