@@ -10,9 +10,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry){
-        registry.addMapping("/*")
+        registry.addMapping("/**")
                 .allowedOriginPatterns("")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
                 .exposedHeaders("Authorization", "Content-Type", "Custom-Header")
                 .allowCredentials(true)
                 .maxAge(3600);
