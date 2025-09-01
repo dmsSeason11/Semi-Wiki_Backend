@@ -40,7 +40,7 @@ public class AuthController {
 
     //true = 사용 가능, false = 사용 불가(이미 존재)
     //수정 필요 account-id
-    @GetMapping("/checkaccountId")
+    @GetMapping("/checkaccountid")
     @ResponseStatus(HttpStatus.OK)
     public boolean checkAccountId(@RequestParam String accountId) {
         return checkAccountIdService.execute(accountId);
