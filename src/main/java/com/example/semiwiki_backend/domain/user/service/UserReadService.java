@@ -89,7 +89,6 @@ public class UserReadService {
         }
         else
             throw new IncorrectOrderByException();
-        System.out.println("noticeBoards: " + noticeBoards);
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = new ArrayList<>();
         for (NoticeBoard noticeBoard : noticeBoards) {
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
@@ -106,7 +105,6 @@ public class UserReadService {
 
             noticeBoardListResponseDtos.add(noticeBoardListResponseDto);
         }
-        System.out.println("noticeBoardListResponseDtos: " + noticeBoardListResponseDtos);
         return noticeBoardListResponseDtos;
 
     }

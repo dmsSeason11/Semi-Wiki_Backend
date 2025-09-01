@@ -16,8 +16,9 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
     int countUserNoticeBoardsByUser(User user);
 
     boolean existsUserNoticeBoardByUserAndNoticeBoard(User user, NoticeBoard noticeBoard);
+    //최신순 정렬
 
-    // 1. 카테고리 모두 일치 + 특정 유저
+    //카테고리로 조회
     @Query("""
     SELECT n 
     FROM UserNoticeBoard unb
@@ -40,7 +41,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 2. 제목 검색 + 특정 유저
+    // 제목으로 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -55,7 +56,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 3. 제목 + 카테고리 모두 일치 + 특정 유저
+    // 카테고리,제목 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -80,7 +81,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 4. 최신순 정렬 + 특정 유저
+    // 전체 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -93,7 +94,9 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 5. 좋아요 수 내림차순 + 특정 유저 (JPQL)
+    //여기는 좋아요순
+
+    // 전체 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -108,7 +111,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 6. 카테고리 모두 일치 + 좋아요 수 내림차순 + 특정 유저
+    // 카테고리 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -133,7 +136,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 7. 제목 검색 + 좋아요 수 내림차순 + 특정 유저
+    // 제목으로 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -150,7 +153,7 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    // 8. 제목 + 카테고리 모두 일치 + 좋아요 수 내림차순 + 특정 유저
+    // 제목,카테고리로 조회
     @Query("""
     SELECT n
     FROM UserNoticeBoard unb
@@ -177,9 +180,9 @@ public interface UserNoticeBoardRepository extends JpaRepository<UserNoticeBoard
             Pageable pageable
     );
 
-    //여기부터 count(건들지 마)
+    //개수 세는 함수
 
-    // 또는 더 간단한 방법:
+    // 카테고리로 개수
     @Query("""
 SELECT COUNT(DISTINCT n.id) 
 FROM UserNoticeBoard unb
@@ -202,7 +205,7 @@ WHERE unb.user.accountId = :accountId
             @Param("categoryCount") long categoryCount
     );
 
-    // 2. 제목 검색 + 특정 유저 (이건 맞음)
+    // 제목으로 조회
     @Query("""
 SELECT COUNT(DISTINCT n)
 FROM UserNoticeBoard unb
@@ -215,7 +218,7 @@ WHERE unb.user.accountId = :accountId
             @Param("title") String title
     );
 
-    // 3. 제목 + 카테고리 모두 일치 + 특정 유저 (수정 필요)
+    // 제목,카테고리 조회
     @Query("""
 SELECT COUNT(DISTINCT n.id) 
 FROM UserNoticeBoard unb
@@ -239,7 +242,7 @@ WHERE unb.user.accountId = :accountId
             @Param("categoryCount") long categoryCount
     );
 
-    // 4. 특정 유저의 전체 글 개수 (이건 맞음)
+    // 전체 조회
     @Query("""
 SELECT COUNT(DISTINCT n)
 FROM UserNoticeBoard unb

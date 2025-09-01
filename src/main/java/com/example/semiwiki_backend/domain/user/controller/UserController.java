@@ -24,9 +24,7 @@ public class UserController {
 
     @GetMapping("{accountId}/list")
     public ResponseEntity<List<NoticeBoardListResponseDto>> getUserNoticeBoardList(@PathVariable String accountId, @RequestBody NoticeBoardListDto noticeBoardListDto) {
-        System.out.println("dto : " + noticeBoardListDto.getKeyword() + noticeBoardListDto.getCategories()+ noticeBoardListDto.getOffset()+ noticeBoardListDto.getLimit());
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = userReadService.GetNoticeBoardsFromUser(accountId, noticeBoardListDto);
-        System.out.println("noticeBoardListResponseDto: " + noticeBoardListResponseDtos);
         if(noticeBoardListResponseDtos == null || noticeBoardListResponseDtos.isEmpty()){
             return ResponseEntity.noContent().build();
         }
