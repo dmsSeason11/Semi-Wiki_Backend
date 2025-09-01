@@ -29,6 +29,9 @@ public class NoticeBoard {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private String contents;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -41,7 +44,7 @@ public class NoticeBoard {
     @JsonIgnoreProperties({"user"})
     private List<UserNoticeBoard> users = new ArrayList<>();
 
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="notice_board_id")
     private List<NoticeBoardHeader> noticeBoardHeaders = new ArrayList<>();
 
@@ -57,8 +60,15 @@ public class NoticeBoard {
         this.users.add(userNoticeBoard);
     }
 
-    public void updateUserNoticeAndCategories(List<UserNoticeBoard> userNoticeBoard,List<String> categories) {
-        this.users = userNoticeBoard;
+    public void updateHeaderEmpty(){
+        this.noticeBoardHeaders.clear(); // 엔티티 삭제 위함
+    }
+
+    public void updateNoticeBoard(List<NoticeBoardHeader> headers, List<UserNoticeBoard> users, String title, String contents, List<String> categories) {
+        this.noticeBoardHeaders.addAll(headers);
+        this.contents = contents;
         this.categories = categories;
+        this.title = title;
+        this.users = users;
     }
 }

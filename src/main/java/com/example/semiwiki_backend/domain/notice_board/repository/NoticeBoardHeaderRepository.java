@@ -1,5 +1,6 @@
 package com.example.semiwiki_backend.domain.notice_board.repository;
 
+import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
