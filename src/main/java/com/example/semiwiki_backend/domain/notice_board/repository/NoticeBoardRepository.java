@@ -45,4 +45,42 @@ public interface NoticeBoardRepository extends JpaRepository<NoticeBoard, Intege
     // 최신순 정렬
     @Query("SELECT n FROM NoticeBoard n ORDER BY n.createdAt DESC")
     List<NoticeBoard> findAllNoticeBoards(Pageable pageable);
+
+    Long countByTitleContainingIgnoreCase(String title);
+
+    @Query("""
+        SELECT COUNT(n)
+        FROM NoticeBoard n
+        WHERE n.id IN (
+            SELECT n2.id
+            FROM NoticeBoard n2
+            JOIN n2.categories c
+            WHERE LOWER(n2.title) LIKE LOWER(CONCAT('%', :title, '%'))
+              AND c IN :categories
+            GROUP BY n2.id
+            HAVING COUNT(DISTINCT c) = :categoryCount
+        )
+""")
+    Long countByTitleContainingAndCategoriesAllMatch(
+            @Param("title") String title,
+            @Param("categories") List<String> categories,
+            @Param("categoryCount") long categoryCount
+    );
+
+    @Query("""
+        SELECT COUNT(n)
+        FROM NoticeBoard n
+        WHERE n.id IN (
+            SELECT n2.id
+            FROM NoticeBoard n2
+            JOIN n2.categories c
+            WHERE c IN :categories
+            GROUP BY n2.id
+            HAVING COUNT(DISTINCT c) = :categoryCount
+        )
+""")
+    Long countByCategoriesAllMatch(
+            @Param("categories") List<String> categories,
+            @Param("categoryCount") long categoryCount
+    );
 }
