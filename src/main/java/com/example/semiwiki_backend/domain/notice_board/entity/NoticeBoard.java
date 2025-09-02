@@ -13,7 +13,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 @Getter
 @Builder
@@ -40,7 +39,7 @@ public class NoticeBoard {
     @Column(name = "modificated_at")
     private LocalDateTime modficatedAt;
 
-    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"user"})
     private List<UserNoticeBoard> users = new ArrayList<>();
 

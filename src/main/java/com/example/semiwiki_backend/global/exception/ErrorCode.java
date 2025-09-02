@@ -20,8 +20,8 @@ public enum ErrorCode {
     NOT_LIKED(HttpStatus.BAD_REQUEST,"not liked"),
     STUDENT_NUM_ALREADY_EXISTS(HttpStatus.CONFLICT,"student number already exists"),
     HEADER_NOT_FOUND(HttpStatus.NOT_FOUND,"header not found"),
-    NO_HEADER(HttpStatus.BAD_REQUEST,"no header");
-
+    NO_HEADER(HttpStatus.BAD_REQUEST,"no header"),
+    INCORRECT_ORDER_BY(HttpStatus.BAD_REQUEST, "incorrect order by option");
 
     private final HttpStatus httpStatus;
     private final String message;

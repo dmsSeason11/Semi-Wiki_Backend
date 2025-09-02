@@ -56,7 +56,6 @@ public class SecurityConfig {
             .anyRequest().permitAll())
         .build();
   }
-
 }
 
 
