@@ -11,11 +11,9 @@ import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponse
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
-import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ public class UserReadService {
     private final NoticeBoardRepository noticeBoardRepository;
 
     //유저 마이페이지 정보 반환
-    public UserMyPageResponseDto GetUserInfo(String accountId) {
+    public UserMyPageResponseDto getUserInfo(String accountId) {
         User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException());
         int noticeBoardcount = userNoticeBoardRepository.countUserNoticeBoardsByUser(user); //게시판과의 관계의 개수를 셈 == 기여한 게시판 수
 
@@ -40,16 +38,12 @@ public class UserReadService {
     }
 
     //유저가 기여한(제작, 수정) 게시글 목록
-    public List<NoticeBoardListResponseDto> GetNoticeBoardsFromUser(String accountId, NoticeBoardListDto dto) {
-        final List<String> categories = dto.getCategories();
-        final String keyword = dto.getKeyword();
-        final int offset = dto.getOffset();
-        final int limit = dto.getLimit();
+    public List<NoticeBoardListResponseDto> getNoticeBoardsFromUser(String accountId, String keyword, List<String> categories, String orderBy, int offset, int limit) {
 
         User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException());
 
         List<NoticeBoard> noticeBoards = new ArrayList<>();
-        if(dto.getOrderBy().equals("recent")){
+        if(orderBy.equals("recent")){
             if(categories == null || categories.isEmpty()) {
                 //카테고리랑 키워드 둘다 없는경우
                 if(keyword == null || keyword.isEmpty()){
@@ -68,7 +62,7 @@ public class UserReadService {
             }
 
         }
-        else if(dto.getOrderBy().equals("like")){
+        else if(orderBy.equals("like")){
             if(categories == null || categories.isEmpty()) {
                 //카테고리랑 키워드 둘다 없는경우
                 if(keyword == null || keyword.isEmpty()){
@@ -109,18 +103,16 @@ public class UserReadService {
 
     }
 
-    public Long GetNoticeBoardCount(String accountId, NoticeBoardCountRequestDto requestDto) {
-        final String title = requestDto.getTitle();
-        final List<String> categories = requestDto.getCategories();
-        if(title == null) {
+    public Long getNoticeBoardCount(String accountId, String keyword, List<String> categories) {
+        if(keyword == null) {
             if (categories == null)
                 return userNoticeBoardRepository.countAllByUser(accountId);
 
             return userNoticeBoardRepository.countByUserAndCategoriesAllMatch(accountId,categories, categories.size());
         }
         if(categories == null)
-            return userNoticeBoardRepository.countByUserAndTitleContainingIgnoreCase(accountId,title);
+            return userNoticeBoardRepository.countByUserAndTitleContainingIgnoreCase(accountId,keyword);
 
-        return userNoticeBoardRepository.countByUserAndTitleContainingAndCategoriesAllMatch(accountId, title,categories, categories.size());
+        return userNoticeBoardRepository.countByUserAndTitleContainingAndCategoriesAllMatch(accountId, keyword,categories, categories.size());
     }
 }
