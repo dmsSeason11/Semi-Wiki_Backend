@@ -40,8 +40,8 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestBody NoticeBoardListDto noticeBoardListDto){
-        return ResponseEntity.ok().body(noticeBoardGetListService.getNoticeBoardList(noticeBoardListDto));
+    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam List<String> categories, @RequestParam String keyword, @RequestParam int offset, @RequestParam int limit, @RequestParam String orderBy){
+        return ResponseEntity.ok().body(noticeBoardGetListService.getNoticeBoardList(categories,keyword,offset,limit,orderBy));
     }
 
     @PutMapping("/put/{id}")
@@ -56,7 +56,7 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Long> countNoticeBoard(@RequestBody NoticeBoardCountRequestDto dto){
-        return ResponseEntity.ok().body(noticeBoardGetCountService.noticeBoardGetCount(dto));
+    public ResponseEntity<Long> countNoticeBoard(@RequestParam List<String> categories, @RequestParam String keyword){
+        return ResponseEntity.ok().body(noticeBoardGetCountService.noticeBoardGetCount(keyword, categories));
     }
 }
