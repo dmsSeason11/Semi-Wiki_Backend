@@ -20,13 +20,9 @@ import java.util.List;
 public class NoticeBoardGetListService {
     private final NoticeBoardRepository noticeBoardRepository;
 
-    public List<NoticeBoardListResponseDto> getNoticeBoardList(NoticeBoardListDto noticeBoardListDto) {
-        final List<String> categories = noticeBoardListDto.getCategories();
-        final String keyword = noticeBoardListDto.getKeyword();
-        final int offset = noticeBoardListDto.getOffset();
-        final int limit = noticeBoardListDto.getLimit();
+    public List<NoticeBoardListResponseDto> getNoticeBoardList(List<String> categories,String keyword,int offset,int limit,String orderBy) {
 
-        if(noticeBoardListDto.getOrderBy().equals("recent")){ //최신순
+        if(orderBy.equals("recent")){ //최신순
             if(categories == null || categories.isEmpty()) {
                 //카테고리랑 키워드 둘다 없는경우
                 if(keyword == null || keyword.isEmpty()){
@@ -46,7 +42,7 @@ public class NoticeBoardGetListService {
             List<NoticeBoard> noticeBoardList = noticeBoardRepository.findByTitleContainingAndCategoriesAllMatch(keyword, categories, categories.size(), PageRequest.of(offset, limit));
             return getNoticeBoardListResponseDtos(noticeBoardList);
         }
-        else if(noticeBoardListDto.getOrderBy().equals("like")){
+        else if(orderBy.equals("like")){
             if(categories == null || categories.isEmpty()) {
                 //카테고리랑 키워드 둘다 없는경우
                 if(keyword == null || keyword.isEmpty()){
