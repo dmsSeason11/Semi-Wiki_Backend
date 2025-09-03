@@ -25,9 +25,9 @@ public class UserController {
     public ResponseEntity<List<NoticeBoardListResponseDto>> getUserNoticeBoardList(@PathVariable String accountId,
                                                                                    @RequestParam(required = false) String keyword,
                                                                                    @RequestParam(required = false) List<String> categories,
-                                                                                   @RequestParam(required = false) String orderBy,
-                                                                                   @RequestParam(required = false) int offset,
-                                                                                   @RequestParam(required = false) int limit) {
+                                                                                   @RequestParam(required = false, defaultValue = "recent") String orderBy,
+                                                                                   @RequestParam(required = false, defaultValue = "0") int offset,
+                                                                                   @RequestParam(required = false, defaultValue = "20") int limit) {
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = userReadService.getNoticeBoardsFromUser(accountId, keyword, categories, orderBy, offset, limit);
         if(noticeBoardListResponseDtos == null || noticeBoardListResponseDtos.isEmpty()){
             return ResponseEntity.noContent().build();

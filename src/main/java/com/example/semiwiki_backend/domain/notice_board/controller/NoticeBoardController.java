@@ -42,8 +42,9 @@ public class NoticeBoardController {
     @GetMapping("/list")
     public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(required = false) List<String> categories,
                                                                             @RequestParam(required = false) String keyword,
-                                                                            @RequestParam int offset, @RequestParam int limit,
-                                                                            @RequestParam String orderBy){
+                                                                            @RequestParam(required = false, defaultValue = "0") int offset,
+                                                                            @RequestParam(required = false, defaultValue = "20") int limit,
+                                                                            @RequestParam(required = false, defaultValue = "recent") String orderBy){
         return ResponseEntity.ok().body(noticeBoardGetListService.getNoticeBoardList(categories,keyword,offset,limit,orderBy));
     }
 
