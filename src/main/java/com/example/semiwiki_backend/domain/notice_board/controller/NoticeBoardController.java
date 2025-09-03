@@ -40,7 +40,14 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/list")
+<<<<<<< Updated upstream
     public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam List<String> categories, @RequestParam String keyword, @RequestParam int offset, @RequestParam int limit, @RequestParam String orderBy){
+=======
+    public ResponseEntity<List<NoticeBoardListResponseDto>> listNoticeBoard(@RequestParam(required = false) List<String> categories,
+                                                                            @RequestParam(required = false) String keyword,
+                                                                            @RequestParam int offset, @RequestParam int limit,
+                                                                            @RequestParam String orderBy){
+>>>>>>> Stashed changes
         return ResponseEntity.ok().body(noticeBoardGetListService.getNoticeBoardList(categories,keyword,offset,limit,orderBy));
     }
 
@@ -56,7 +63,12 @@ public class NoticeBoardController {
     }
 
     @GetMapping("/count")
+<<<<<<< Updated upstream
     public ResponseEntity<Long> countNoticeBoard(@RequestParam List<String> categories, @RequestParam String keyword){
+=======
+    public ResponseEntity<Long> countNoticeBoard(@RequestParam(required = false) List<String> categories,
+                                                 @RequestParam(required = false) String keyword){
+>>>>>>> Stashed changes
         return ResponseEntity.ok().body(noticeBoardGetCountService.noticeBoardGetCount(keyword, categories));
     }
 }
