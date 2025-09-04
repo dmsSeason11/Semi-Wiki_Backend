@@ -7,6 +7,7 @@ import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader
 import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoHeaderException;
 import com.example.semiwiki_backend.domain.notice_board.exception.OverRunCategoryException;
+import com.example.semiwiki_backend.domain.notice_board.exception.NoTitleException;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
@@ -41,12 +42,18 @@ public class NoticeBoardCreateService {
         CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
         Integer userId = userDetails.getId();
 
+        //타이틀 빈경우 예외
+        if(dto.getTitle() == null || dto.getTitle().trim().equals(""))
+            throw new NoTitleException();
+
+
         List<String> categories = dto.getCategories();
         if (categories == null || categories.isEmpty())
             throw new NoCategoryException();
-        else if(categories.size() > 3)
+        else if(categories.size() > 3) //카테고리 최대 개수 3개 설정
             throw new OverRunCategoryException();
-        List<NoticeBoardHeader> headers = parseMarkdownToHeaders(dto.getContents());
+
+        List<NoticeBoardHeader> headers = parseMarkdownToHeaders(dto.getContents()); //헤더가 없는경우 오류 발생
         if(headers == null)
             throw new NoHeaderException();
 

@@ -5,6 +5,7 @@ import com.example.semiwiki_backend.domain.auth.exception.AccountAlreadyExistsEx
 import com.example.semiwiki_backend.domain.auth.exception.AccountNotFoundException;
 import com.example.semiwiki_backend.domain.auth.exception.IncorrectPasswordException;
 import com.example.semiwiki_backend.domain.auth.exception.StudentNumAlreadyExistsException;
+import com.example.semiwiki_backend.domain.notice_board.exception.NoTitleException;
 import com.example.semiwiki_backend.domain.notice_board.exception.OverRunCategoryException;
 import com.example.semiwiki_backend.domain.user_like.exception.AlreadyLikedException;
 import com.example.semiwiki_backend.domain.user_like.exception.NotLikedException;
@@ -81,5 +82,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
+    @ExceptionHandler(NoTitleException.class)
+    public ResponseEntity<String> handleNoTitleException(NoTitleException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
 }

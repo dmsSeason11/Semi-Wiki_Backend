@@ -22,7 +22,11 @@ public enum ErrorCode {
     HEADER_NOT_FOUND(HttpStatus.NOT_FOUND,"header not found"),
     NO_HEADER(HttpStatus.BAD_REQUEST,"no header"),
     INCORRECT_ORDER_BY(HttpStatus.BAD_REQUEST, "incorrect order by option"),
+<<<<<<< Updated upstream
     OVER_RUN_CATEGORY(HttpStatus.BAD_REQUEST,"over run category"),;
+=======
+    NO_TITLE(HttpStatus.BAD_REQUEST,"no title"),;
+>>>>>>> Stashed changes
 
     private final HttpStatus httpStatus;
     private final String message;
