@@ -6,6 +6,7 @@ import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoHeaderException;
+import com.example.semiwiki_backend.domain.notice_board.exception.OverRunCategoryException;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
@@ -43,6 +44,8 @@ public class NoticeBoardCreateService {
         List<String> categories = dto.getCategories();
         if (categories == null || categories.isEmpty())
             throw new NoCategoryException();
+        else if(categories.size() > 3)
+            throw new OverRunCategoryException();
         List<NoticeBoardHeader> headers = parseMarkdownToHeaders(dto.getContents());
         if(headers == null)
             throw new NoHeaderException();
