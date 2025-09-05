@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface NoticeBoardRepository extends JpaRepository<NoticeBoard, Integer> {
 
+    boolean existsByTitle(String title);
     // 카테고리로 조회
     @Query("""
         SELECT n 

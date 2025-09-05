@@ -5,12 +5,9 @@ import com.example.semiwiki_backend.domain.auth.exception.AccountAlreadyExistsEx
 import com.example.semiwiki_backend.domain.auth.exception.AccountNotFoundException;
 import com.example.semiwiki_backend.domain.auth.exception.IncorrectPasswordException;
 import com.example.semiwiki_backend.domain.auth.exception.StudentNumAlreadyExistsException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoTitleException;
-import com.example.semiwiki_backend.domain.notice_board.exception.OverRunCategoryException;
+import com.example.semiwiki_backend.domain.notice_board.exception.*;
 import com.example.semiwiki_backend.domain.user_like.exception.AlreadyLikedException;
 import com.example.semiwiki_backend.domain.user_like.exception.NotLikedException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
 import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
@@ -84,6 +81,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoTitleException.class)
     public ResponseEntity<String> handleNoTitleException(NoTitleException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateTitleException.class)
+    public ResponseEntity<String> handleDuplicateTitleException(DuplicateTitleException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 

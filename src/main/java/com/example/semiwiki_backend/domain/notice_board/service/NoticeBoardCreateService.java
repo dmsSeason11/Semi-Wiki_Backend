@@ -4,10 +4,7 @@ import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardC
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoCategoryException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoHeaderException;
-import com.example.semiwiki_backend.domain.notice_board.exception.OverRunCategoryException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoTitleException;
+import com.example.semiwiki_backend.domain.notice_board.exception.*;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
@@ -45,6 +42,8 @@ public class NoticeBoardCreateService {
         //타이틀 빈경우 예외
         if(dto.getTitle() == null || dto.getTitle().trim().equals(""))
             throw new NoTitleException();
+        else if(noticeBoardRepository.existsByTitle(dto.getTitle()))
+            throw new DuplicateTitleException();
 
 
         List<String> categories = dto.getCategories();
