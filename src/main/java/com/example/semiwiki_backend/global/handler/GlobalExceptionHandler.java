@@ -89,4 +89,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
+    @ExceptionHandler(NoHeaderException.class)
+    public ResponseEntity<String> handleNoHeaderException(NoHeaderException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(IncorrectOrderByException.class)
+    public ResponseEntity<String> handleIncorrectOrderByException(IncorrectOrderByException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
 }
