@@ -4,8 +4,7 @@ import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardH
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoHeaderException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
+import com.example.semiwiki_backend.domain.notice_board.exception.*;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
@@ -43,6 +42,16 @@ public class NoticeBoardUpdateService {
                 .orElseThrow(() -> new UserNotFoundException());
         NoticeBoard noticeBoard = noticeBoardRepository.findById(id)
                 .orElseThrow(() -> new NoticeBoardNotFoundException());
+
+        if(dto.getTitle() == null || dto.getTitle().trim().equals(""))
+            throw new NoTitleException();
+        else if(noticeBoardRepository.existsByTitle(dto.getTitle()) && !(noticeBoard.getTitle().equals(dto.getTitle())))
+            throw new DuplicateTitleException();
+
+        if (dto.getCategories() == null || dto.getCategories().isEmpty())
+            throw new NoCategoryException();
+        else if(dto.getCategories().size() > 3) //카테고리 최대 개수 3개 설정
+            throw new OverRunCategoryException();
 
         //유저가 기여했는지 확인, 기여 안된경우 기여한목록에 추가
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
