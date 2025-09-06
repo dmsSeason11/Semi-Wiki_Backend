@@ -5,7 +5,7 @@ import com.example.semiwiki_backend.global.exception.ErrorCode;
 public class NoHeaderException extends RuntimeException {
     private final ErrorCode errorCode;
     public NoHeaderException() {
-        super(ErrorCode.HEADER_NOT_FOUND.getMessage());
-        this.errorCode = ErrorCode.HEADER_NOT_FOUND;
+        super(ErrorCode.NO_HEADER.getMessage());
+        this.errorCode = ErrorCode.NO_HEADER;
     }
 }

@@ -25,7 +25,7 @@ public class NoticeBoard {
     @Column(unique = true, nullable = false)
     private int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @Column(nullable = false)
