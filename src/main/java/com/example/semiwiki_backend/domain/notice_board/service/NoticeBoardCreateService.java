@@ -53,7 +53,7 @@ public class NoticeBoardCreateService {
             throw new OverRunCategoryException();
 
         List<NoticeBoardHeader> headers = parseMarkdownToHeaders(dto.getContents()); //헤더가 없는경우 오류 발생
-        if(headers == null)
+        if(headers == null || headers.isEmpty())
             throw new NoHeaderException();
 
         //noticeBoard 저장
