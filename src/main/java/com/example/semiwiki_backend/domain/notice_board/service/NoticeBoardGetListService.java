@@ -1,13 +1,11 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.exception.IncorrectOrderByException;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
 import com.example.semiwiki_backend.domain.user.entity.User;
-import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -69,15 +67,10 @@ public class NoticeBoardGetListService {
     private List<NoticeBoardListResponseDto> getNoticeBoardListResponseDtos(List<NoticeBoard> noticeBoardList) {
         List<NoticeBoardListResponseDto> noticeBoardListDto = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoardList) {
-            List<User> users = new ArrayList<>();
-            List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
-            for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
-                users.add(userNoticeBoard.getUser());
-
-            int usersLength = users.size();
+            User modifier = noticeBoard.getUsers().get(noticeBoard.getUsers().size()-1).getUser();
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
-                    .userId(users.get(usersLength-1).getId())
-                    .accountId(users.get(usersLength-1).getAccountId())
+                    .userId(modifier.getId()) // 마지막 수정자 기준
+                    .accountId(modifier.getAccountId())
                     .build();
 
             noticeBoardListDto.add(NoticeBoardListResponseDto.builder()

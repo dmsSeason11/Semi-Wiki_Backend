@@ -252,5 +252,17 @@ WHERE unb.user.accountId = :accountId
     Long countAllByUser(
             @Param("accountId") String accountId
     );
+
+    @Query("""
+        SELECT n
+        FROM UserNoticeBoard unb
+        JOIN unb.noticeBoard n
+        JOIN UserLike ul ON ul.noticeBoard = n
+        WHERE ul.user.accountId = :accountId
+        ORDER BY ul.likedAt DESC
+""")
+    List<NoticeBoard> findAllByUserWithLike(
+            @Param("accountId") String accountId
+    );
 }
 

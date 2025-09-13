@@ -1,12 +1,8 @@
 package com.example.semiwiki_backend.domain.user.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCountRequestDto;
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.exception.IncorrectOrderByException;
-import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
-import com.example.semiwiki_backend.domain.user.dto.response.UserMyPageResponseDto;
 import com.example.semiwiki_backend.domain.user.dto.response.UserPreviewResponseDto;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
@@ -21,21 +17,34 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserReadService {
-    private final UserRepository userRepository;
+public class UserListService {
     private final UserNoticeBoardRepository userNoticeBoardRepository;
-    private final NoticeBoardRepository noticeBoardRepository;
+    private final UserRepository userRepository;
 
-    //유저 마이페이지 정보 반환
-    public UserMyPageResponseDto getUserInfo(String accountId) {
+    public List<NoticeBoardListResponseDto> getNoticeBoardListByUserWithLike(String accountId){
         User user = userRepository.findByAccountId(accountId).orElseThrow(() -> new UserNotFoundException());
-        int noticeBoardcount = userNoticeBoardRepository.countUserNoticeBoardsByUser(user); //게시판과의 관계의 개수를 셈 == 기여한 게시판 수
 
-        return  UserMyPageResponseDto.builder()
-                .noticeBoardCount(noticeBoardcount)
-                .accountId(user.getAccountId())
-                .build();
+        List<NoticeBoard> noticeBoards = userNoticeBoardRepository.findAllByUserWithLike(accountId);
+
+        List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = new ArrayList<>();
+        for (NoticeBoard noticeBoard : noticeBoards) {
+            User modifier = noticeBoard.getUsers().get(noticeBoard.getUsers().size()-1).getUser();
+            UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
+                    .userId(modifier.getId()) // 마지막 수정자 기준
+                    .accountId(modifier.getAccountId())
+                    .build();
+
+            NoticeBoardListResponseDto noticeBoardListResponseDto = NoticeBoardListResponseDto.builder()
+                    .id(noticeBoard.getId())
+                    .title(noticeBoard.getTitle())
+                    .categories(noticeBoard.getCategories())
+                    .userPreview(userPreviewResponseDto)
+                    .build();
+            noticeBoardListResponseDtos.add(noticeBoardListResponseDto);
+        }
+        return noticeBoardListResponseDtos;
     }
+
 
     //유저가 기여한(제작, 수정) 게시글 목록
     public List<NoticeBoardListResponseDto> getNoticeBoardsFromUser(String accountId, String keyword, List<String> categories, String orderBy, int offset, int limit) {
@@ -69,7 +78,7 @@ public class UserReadService {
                     noticeBoards = userNoticeBoardRepository.findAllByUserOrderByLikeCountDescThenCreatedAtDesc(accountId,PageRequest.of(offset, limit));
                 }
                 else
-                //검색 키워드만 있는경우
+                    //검색 키워드만 있는경우
                     noticeBoards = userNoticeBoardRepository.findByUserAndTitleContainingIgnoreCaseOrderByLikeCountDesc(accountId,keyword,PageRequest.of(offset, limit));
             }
             //카테고리만 있는경우
@@ -85,9 +94,10 @@ public class UserReadService {
             throw new IncorrectOrderByException();
         List<NoticeBoardListResponseDto> noticeBoardListResponseDtos = new ArrayList<>();
         for (NoticeBoard noticeBoard : noticeBoards) {
+            User modifier = noticeBoard.getUsers().get(noticeBoard.getUsers().size()-1).getUser();
             UserPreviewResponseDto userPreviewResponseDto = UserPreviewResponseDto.builder()
-                    .userId(noticeBoard.getUsers().get(0).getUser().getId()) // 첫 번째 작성자 기준
-                    .accountId(noticeBoard.getUsers().get(0).getUser().getAccountId())
+                    .userId(modifier.getId()) // 마지막 수정자 기준
+                    .accountId(modifier.getAccountId())
                     .build();
 
             NoticeBoardListResponseDto noticeBoardListResponseDto = NoticeBoardListResponseDto.builder()
