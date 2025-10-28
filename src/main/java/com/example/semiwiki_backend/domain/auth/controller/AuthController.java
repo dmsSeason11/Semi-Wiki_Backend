@@ -20,6 +20,7 @@ public class AuthController {
     private final CheckAccountIdService checkAccountIdService;
     private final ReissueService reissueService;
     private final LogoutService logoutService;
+    private final DeleteUserService deleteUserService;
 
 
 
@@ -53,6 +54,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public void logout(@PathVariable String accountId) {
         logoutService.execute(accountId);
+    }
+
+    @DeleteMapping("{accountId}")
+    public void delete(@PathVariable String accountId) {
+        deleteUserService.execute(accountId);
     }
 
 
