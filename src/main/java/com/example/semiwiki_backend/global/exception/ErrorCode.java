@@ -23,7 +23,8 @@ public enum ErrorCode {
     INCORRECT_ORDER_BY(HttpStatus.BAD_REQUEST, "incorrect order by option"),
     OVER_RUN_CATEGORY(HttpStatus.BAD_REQUEST,"over run category"),
     NO_TITLE(HttpStatus.BAD_REQUEST,"no title"),
-    DUPLICATE_TITLE(HttpStatus.BAD_REQUEST,"duplicate title");
+    DUPLICATE_TITLE(HttpStatus.BAD_REQUEST,"duplicate title"),
+    NOT_ACCOUNT_OWNER(HttpStatus.UNAUTHORIZED,"not account owner");
 
     private final HttpStatus httpStatus;
     private final String message;

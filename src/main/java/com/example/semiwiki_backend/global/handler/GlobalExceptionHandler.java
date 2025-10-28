@@ -1,10 +1,7 @@
 package com.example.semiwiki_backend.global.handler;
 
 
-import com.example.semiwiki_backend.domain.auth.exception.AccountAlreadyExistsException;
-import com.example.semiwiki_backend.domain.auth.exception.AccountNotFoundException;
-import com.example.semiwiki_backend.domain.auth.exception.IncorrectPasswordException;
-import com.example.semiwiki_backend.domain.auth.exception.StudentNumAlreadyExistsException;
+import com.example.semiwiki_backend.domain.auth.exception.*;
 import com.example.semiwiki_backend.domain.notice_board.exception.*;
 import com.example.semiwiki_backend.domain.user_like.exception.AlreadyLikedException;
 import com.example.semiwiki_backend.domain.user_like.exception.NotLikedException;
@@ -97,6 +94,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IncorrectOrderByException.class)
     public ResponseEntity<String> handleIncorrectOrderByException(IncorrectOrderByException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(NotAccountOwnerException.class)
+    public ResponseEntity<String> handleNotAccountOwnerException(NotAccountOwnerException e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
 }
