@@ -2,16 +2,14 @@ package com.example.semiwiki_backend.global.security.exception;
 
 
 import com.example.semiwiki_backend.global.exception.ErrorCode;
+import com.example.semiwiki_backend.global.exception.SemiWikiException;
+import lombok.Getter;
 
-
-
-public class JwtExpiredException extends RuntimeException {
-
-  private final ErrorCode errorCode;
+@Getter
+public class JwtExpiredException extends SemiWikiException {
 
   public JwtExpiredException() {
-    super(ErrorCode.EXPIRED_TOKEN.getMessage());
-    this.errorCode = ErrorCode.EXPIRED_TOKEN;
+    super(ErrorCode.EXPIRED_TOKEN);
   }
 
 

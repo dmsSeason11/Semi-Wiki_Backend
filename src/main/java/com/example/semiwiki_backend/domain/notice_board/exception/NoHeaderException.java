@@ -1,11 +1,10 @@
 package com.example.semiwiki_backend.domain.notice_board.exception;
 
 import com.example.semiwiki_backend.global.exception.ErrorCode;
+import com.example.semiwiki_backend.global.exception.SemiWikiException;
 
-public class NoHeaderException extends RuntimeException {
-    private final ErrorCode errorCode;
+public class NoHeaderException extends SemiWikiException {
     public NoHeaderException() {
-        super(ErrorCode.NO_HEADER.getMessage());
-        this.errorCode = ErrorCode.NO_HEADER;
+        super(ErrorCode.NO_HEADER);
     }
 }
