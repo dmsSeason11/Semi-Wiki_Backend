@@ -1,13 +1,11 @@
 package com.example.semiwiki_backend.domain.auth.exception;
 
 import com.example.semiwiki_backend.global.exception.ErrorCode;
+import com.example.semiwiki_backend.global.exception.SemiWikiException;
 
 
-
-public class StudentNumAlreadyExistsException extends RuntimeException {
-    private final ErrorCode errorCode;
+public class StudentNumAlreadyExistsException extends SemiWikiException {
     public StudentNumAlreadyExistsException() {
-        super(ErrorCode.STUDENT_NUM_ALREADY_EXISTS.getMessage());
-        this.errorCode = ErrorCode.STUDENT_NUM_ALREADY_EXISTS;
+        super(ErrorCode.STUDENT_NUM_ALREADY_EXISTS);
     }
 }

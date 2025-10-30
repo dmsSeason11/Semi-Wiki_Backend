@@ -1,16 +1,14 @@
 package com.example.semiwiki_backend.domain.auth.exception;
 
 import com.example.semiwiki_backend.global.exception.ErrorCode;
+import com.example.semiwiki_backend.global.exception.SemiWikiException;
 
 
+public class IncorrectPasswordException extends SemiWikiException {
 
-public class IncorrectPasswordException extends RuntimeException {
-
-  private final ErrorCode errorCode;
 
   public IncorrectPasswordException() {
-    super(ErrorCode.INCORRECT_PASSWORD.getMessage());
-    this.errorCode = ErrorCode.INCORRECT_PASSWORD;
+    super(ErrorCode.INCORRECT_PASSWORD);
   }
 
 }
