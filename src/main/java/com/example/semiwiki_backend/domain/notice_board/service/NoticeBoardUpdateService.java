@@ -14,6 +14,8 @@ import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBo
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import java.util.Stack;
 @Service
 @RequiredArgsConstructor
 public class NoticeBoardUpdateService {
+    private static final Logger logger = LoggerFactory.getLogger(NoticeBoardUpdateService.class);
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
@@ -35,15 +38,14 @@ public class NoticeBoardUpdateService {
     public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardHeaderUpdateRequestDto dto, Integer id, Authentication authentication ) {
         //유저 아이디 jwt토큰에서 가져옴
         CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
 
         //user, noticeBoard 불러옴
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(UserNotFoundException::new);
         NoticeBoard noticeBoard = noticeBoardRepository.findById(id)
-                .orElseThrow(() -> new NoticeBoardNotFoundException());
+                .orElseThrow(NoticeBoardNotFoundException::new);
 
-        if(dto.getTitle() == null || dto.getTitle().trim().equals(""))
+        if(dto.getTitle() == null || dto.getTitle().trim().isEmpty())
             throw new NoTitleException();
         else if(noticeBoardRepository.existsByTitle(dto.getTitle()) && !(noticeBoard.getTitle().equals(dto.getTitle())))
             throw new DuplicateTitleException();
@@ -77,6 +79,8 @@ public class NoticeBoardUpdateService {
 
         noticeBoardRepository.save(noticeBoard);
 
+
+        logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
         //반환용
         List<User> users = new ArrayList<>();
         for (UserNoticeBoard userNotice : userNoticeBoardList)

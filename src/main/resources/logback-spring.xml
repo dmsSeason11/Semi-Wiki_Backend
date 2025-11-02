@@ -1,0 +1,25 @@
+<configuration>
+
+    <appender name="WIKI_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_LOCATION}</fileNamePattern>
+            <maxHistory>30</maxHistory> <!-- 한 달 유지 -->
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.example.semiwiki_backend" level="INFO" additivity="false">
+        <appender-ref ref="WIKI_LOG" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+</configuration>
