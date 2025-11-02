@@ -1,6 +1,5 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCountRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

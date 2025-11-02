@@ -1,8 +1,6 @@
 package com.example.semiwiki_backend.domain.notice_board.controller;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCountRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardCreateRequestDto;
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardListDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardHeaderUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardListResponseDto;

@@ -2,7 +2,6 @@ package com.example.semiwiki_backend.domain.auth.dto;
 
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class SignUpRequest {
