@@ -8,9 +8,6 @@ import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRe
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
 import com.example.semiwiki_backend.domain.user.repository.UserRepository;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
-import com.example.semiwiki_backend.global.security.exception.JwtExpiredException;
-import com.example.semiwiki_backend.global.security.exception.JwtInvalidException;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
