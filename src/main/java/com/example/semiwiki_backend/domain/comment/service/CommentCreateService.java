@@ -46,7 +46,7 @@ public class CommentCreateService {
         return CommentDetailResponseDto.builder()
                 .wroteAt(comment.getWroteAt())
                 .modificatedAt(comment.getModificatedAt())
-                .user(user)
+                .accountId(user.getAccountId())
                 .contents(comment.getContents())
                 .build();
     }

@@ -43,7 +43,7 @@ public class CommentUpdateService {
                 .wroteAt(comment.getWroteAt())
                 .modificatedAt(comment.getModificatedAt())
                 .contents(comment.getContents())
-                .user(comment.getUser())
+                .accountId(comment.getUser().getAccountId())
                 .build();
     }
 }

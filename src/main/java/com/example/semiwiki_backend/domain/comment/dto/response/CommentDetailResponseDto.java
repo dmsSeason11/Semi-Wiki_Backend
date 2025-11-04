@@ -16,5 +16,5 @@ public class CommentDetailResponseDto {
 
     private String contents;
 
-    private User user;
+    private String accountId;
 }
