@@ -46,6 +46,7 @@ public class SecurityConfig {
             .requestMatchers("/notice-board/post", "/notice-board/delete", "/notice-board/put").authenticated()
             .requestMatchers("/like/{board_id}/count").permitAll()
             .requestMatchers("/like/").authenticated()
+            .requestMatchers("/comment/**").authenticated()
             .requestMatchers("/admin/").hasRole("ADMIN")
             .requestMatchers("/user/").hasAnyRole("USER", "ADMIN")
             .anyRequest().permitAll())
