@@ -93,6 +93,7 @@ public class NoticeBoardUpdateService {
                 .createdAt(noticeBoard.getCreatedAt())
                 .modficatedAt(noticeBoard.getModficatedAt())
                 .contents(noticeBoard.getContents())
+                .comments(noticeBoard.getComments())
                 .users(users).build();
     }
 
