@@ -33,6 +33,7 @@ public class NoticeBoardGetDetailService {
                 .users(users)
                 .contents(noticeBoard.getContents())
                 .categories(noticeBoard.getCategories())
+                .comments(noticeBoard.getComments())
                 .build();
     }
 

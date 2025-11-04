@@ -93,6 +93,7 @@ public class NoticeBoardCreateService {
                 .users(users)
                 .categories(noticeBoard.getCategories())
                 .noticeBoardHeaders(noticeBoard.getNoticeBoardHeaders())
+                .comments(noticeBoard.getComments())
                 .build();
     }
 
