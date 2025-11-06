@@ -19,7 +19,7 @@ public class NoticeBoardGetDetailService {
 
 
     public NoticeBoardDetailResponseDto getNoticeBoard(Integer noticeBoardId) {
-        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(() -> new NoticeBoardNotFoundException());
+        NoticeBoard noticeBoard = noticeBoardRepository.findById(noticeBoardId).orElseThrow(NoticeBoardNotFoundException::new);
         List<User> users = new ArrayList<>();
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
         for(UserNoticeBoard userNoticeBoard : userNoticeBoardList)
@@ -33,7 +33,6 @@ public class NoticeBoardGetDetailService {
                 .users(users)
                 .contents(noticeBoard.getContents())
                 .categories(noticeBoard.getCategories())
-                .comments(noticeBoard.getComments())
                 .build();
     }
 
