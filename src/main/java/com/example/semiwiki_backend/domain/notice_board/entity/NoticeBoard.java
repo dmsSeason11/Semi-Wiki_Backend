@@ -28,7 +28,8 @@ public class NoticeBoard {
     @Column(nullable = false, unique = true)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
 
     @CreationTimestamp
