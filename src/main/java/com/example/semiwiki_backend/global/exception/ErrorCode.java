@@ -24,7 +24,8 @@ public enum ErrorCode {
     OVER_RUN_CATEGORY(HttpStatus.BAD_REQUEST,"over run category"),
     NO_TITLE(HttpStatus.BAD_REQUEST,"no title"),
     DUPLICATE_TITLE(HttpStatus.BAD_REQUEST,"duplicate title"),
-    NOT_ACCOUNT_OWNER(HttpStatus.UNAUTHORIZED,"not account owner");
+    NOT_ACCOUNT_OWNER(HttpStatus.UNAUTHORIZED,"not account owner"),
+    IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"image upload error");
 
     private final HttpStatus httpStatus;
     private final String message;

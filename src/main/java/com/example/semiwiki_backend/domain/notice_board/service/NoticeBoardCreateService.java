@@ -33,6 +33,7 @@ public class NoticeBoardCreateService {
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
     private final NoticeBoardHeaderRepository noticeBoardHeaderRepository;
+    private final HtmlImageExtractService htmlImageExtractService;
 
 
     @Transactional
@@ -80,6 +81,12 @@ public class NoticeBoardCreateService {
         List<User> users = new ArrayList<>();
         for (UserNoticeBoard userNotice : noticeBoard.getUsers())
             users.add(userNotice.getUser());
+
+        //HTML에서 이미지 URL 추출
+        List<String> imageUrls = htmlImageExtractService.extractImageUrls(dto.getContents());
+
+        //이미지 매핑
+        htmlImageExtractService.assignImagesToNoticeBoard(noticeBoard.getId(), imageUrls);
 
         logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
 
