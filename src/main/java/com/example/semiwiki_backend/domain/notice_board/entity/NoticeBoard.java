@@ -1,7 +1,9 @@
 package com.example.semiwiki_backend.domain.notice_board.entity;
 
+import com.example.semiwiki_backend.domain.comment.entity.Comment;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +55,9 @@ public class NoticeBoard {
     @Column(name = "category")
     private List<String> categories = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
+
     public void addUserNotice(UserNoticeBoard userNoticeBoard) {
         if(this.users == null) {
             this.users = new ArrayList<>();
@@ -70,5 +75,9 @@ public class NoticeBoard {
         this.categories = categories;
         this.title = title;
         this.users = users;
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 }

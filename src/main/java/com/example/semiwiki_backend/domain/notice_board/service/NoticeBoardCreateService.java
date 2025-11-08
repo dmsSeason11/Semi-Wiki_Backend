@@ -99,7 +99,6 @@ public class NoticeBoardCreateService {
                 .modficatedAt(noticeBoard.getModficatedAt())
                 .users(users)
                 .categories(noticeBoard.getCategories())
-                .noticeBoardHeaders(noticeBoard.getNoticeBoardHeaders())
                 .build();
     }
 
