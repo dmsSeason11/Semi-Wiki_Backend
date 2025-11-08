@@ -110,12 +110,12 @@ public class NoticeBoardCreateService {
 
         for (String line: contents.split("\n")) {
             int headerSize = 0;
-            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
-                headerSize++;
-            }
-            boolean isValidHeader = headerSize > 0 &&
-                    line.length() > headerSize &&
-                    line.charAt(headerSize) == ' ';
+//            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
+//                headerSize++;
+//            }
+            if(line.trim().indexOf("<h") == 0){
+                headerSize = Character.getNumericValue(line.trim().charAt(2));     }
+            boolean isValidHeader = headerSize > 0 ;
 
             //헤더 있는경우 - 수정: isValidHeader 사용
             if(isValidHeader) {
@@ -123,7 +123,7 @@ public class NoticeBoardCreateService {
                     stack.peek().setContentsInGenerate(headerContents);
                 }
                 headerContents = "";
-                String title = line.substring(headerSize + 1).trim();
+                String title = line.trim().substring("<hx>".length(), line.length() - "<hx/>".length()).trim();
                 levelCount[headerSize - 1]++;
                 for(int i = headerSize; i < 6; i++)
                     levelCount[i] = 0;
