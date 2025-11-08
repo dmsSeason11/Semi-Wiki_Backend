@@ -25,6 +25,7 @@ public enum ErrorCode {
     NO_TITLE(HttpStatus.BAD_REQUEST,"no title"),
     DUPLICATE_TITLE(HttpStatus.BAD_REQUEST,"duplicate title"),
     NOT_ACCOUNT_OWNER(HttpStatus.UNAUTHORIZED,"not account owner"),
+    IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"image upload error"),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"comment not found");
 
     private final HttpStatus httpStatus;

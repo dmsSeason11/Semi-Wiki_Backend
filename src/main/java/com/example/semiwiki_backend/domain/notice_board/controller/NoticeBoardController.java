@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,12 +25,11 @@ public class NoticeBoardController {
     private final NoticeBoardDeleteService noticeBoardDeleteService;
     private final NoticeBoardGetListService noticeBoardGetListService;
     private final NoticeBoardGetCountService noticeBoardGetCountService;
+    private final ImageUploadService imageUploadService;
 
     @PostMapping("/post")
     public ResponseEntity<NoticeBoardDetailResponseDto> createNoticeBoard(@RequestBody NoticeBoardCreateRequestDto dto, Authentication authentication) {
         NoticeBoardDetailResponseDto noticeBoardDetailResponseDto = noticeBoardCreateService.createNoticeBoard(dto,authentication);
-        if(noticeBoardDetailResponseDto == null)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         return ResponseEntity.status(HttpStatus.CREATED).body(noticeBoardDetailResponseDto);
     }
 
@@ -62,5 +62,10 @@ public class NoticeBoardController {
     public ResponseEntity<Long> countNoticeBoard(@RequestParam(required = false) List<String> categories,
                                                  @RequestParam(required = false) String keyword){
         return ResponseEntity.ok().body(noticeBoardGetCountService.noticeBoardGetCount(keyword, categories));
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile image, Authentication authentication){
+        return ResponseEntity.ok().body(imageUploadService.UploadImage(image,authentication));
     }
 }
