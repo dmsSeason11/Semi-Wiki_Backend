@@ -3,6 +3,7 @@ package com.example.semiwiki_backend.domain.comment.service;
 import com.example.semiwiki_backend.domain.comment.dto.request.CommentCreateRequestDto;
 import com.example.semiwiki_backend.domain.comment.dto.response.CommentDetailResponseDto;
 import com.example.semiwiki_backend.domain.comment.entity.Comment;
+import com.example.semiwiki_backend.domain.comment.exception.CommentNotValidException;
 import com.example.semiwiki_backend.domain.comment.repository.CommentRepository;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
@@ -37,6 +38,9 @@ public class CommentCreateService {
                         .user(user)
                         .noticeBoard(noticeBoard)
                         .build();
+
+        if(!comment.isValidComment())
+            throw new CommentNotValidException();
 
         comment = commentRepository.save(comment);
         noticeBoard.addComment(comment);
