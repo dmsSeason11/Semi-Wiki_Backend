@@ -37,7 +37,7 @@ public class CommentUpdateService {
 
         comment.updateContents(commentUpdateRequestDto.getContents());
 
-        if(comment.isValidComment())
+        if(!comment.isValidComment())
             throw new CommentNotValidException();
         
         commentRepository.save(comment);

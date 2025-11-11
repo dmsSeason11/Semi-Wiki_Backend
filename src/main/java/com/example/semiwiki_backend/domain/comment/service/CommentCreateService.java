@@ -39,7 +39,7 @@ public class CommentCreateService {
                         .noticeBoard(noticeBoard)
                         .build();
 
-        if(comment.isValidComment())
+        if(!comment.isValidComment())
             throw new CommentNotValidException();
 
         comment = commentRepository.save(comment);
