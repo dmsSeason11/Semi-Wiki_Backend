@@ -10,6 +10,7 @@ import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class ImageUploadService {
   private final ImageRepository imageRepository;
   private final UserRepository userRepository;
 
+  @Value("${minio.ip}")
+  private String ip;
   @Value("${minio.bucket}")
   private String bucket;
   @Transactional
@@ -46,7 +49,7 @@ public class ImageUploadService {
           .contentType(file.getContentType())
           .build());
 
-      String url = "/images/" + fileName;
+      String url = "http://" + ip + ":9000/" + bucket + "/" + fileName;
 
       imageRepository.save(Image.builder()
           .fileName(fileName)
