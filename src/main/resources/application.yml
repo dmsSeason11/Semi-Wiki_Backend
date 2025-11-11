@@ -4,12 +4,13 @@ server:
 spring:
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_NAME:semi_wiki}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&useUnicode=true&connectionCollation=utf8mb4_general_ci
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_NAME}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&useUnicode=true&connectionCollation=utf8mb4_general_ci
 
-    username: ${MYSQL_USERNAME:root}
+    username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
@@ -20,10 +21,11 @@ spring:
 
 jwt:
   secret-key: ${JWT_SECRET_KEY}
-  access-exp: ${JWT_ACCESS_EXP:900000}
-  refresh-exp: ${JWT_REFRESH_EXP:604800000}
+  access-exp: ${JWT_ACCESS_EXP}
+  refresh-exp: ${JWT_REFRESH_EXP}
 minio:
   url : http://${MINIO_HOST}:${MINIO_PORT}
   access-key : ${MINIO_ACCESS_KEY}
-  secret-key: ${MINIO_SECRET_KEY}
+  secret-key: ${MINIO_SECRET_KEY*}
   bucket : ${MINIO_BUCKET}
+  ip : ${MINIO_IP}
