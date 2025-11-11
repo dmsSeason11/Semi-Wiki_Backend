@@ -5,6 +5,7 @@ import com.example.semiwiki_backend.domain.comment.dto.request.CommentUpdateRequ
 import com.example.semiwiki_backend.domain.comment.dto.response.CommentDetailResponseDto;
 import com.example.semiwiki_backend.domain.comment.entity.Comment;
 import com.example.semiwiki_backend.domain.comment.exception.CommentNotFoundException;
+import com.example.semiwiki_backend.domain.comment.exception.CommentNotValidException;
 import com.example.semiwiki_backend.domain.comment.repository.CommentRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
 import com.example.semiwiki_backend.domain.user.exception.UserNotFoundException;
@@ -36,6 +37,9 @@ public class CommentUpdateService {
 
         comment.updateContents(commentUpdateRequestDto.getContents());
 
+        if(comment.isValidComment())
+            throw new CommentNotValidException();
+        
         commentRepository.save(comment);
 
         logger.info("user: {}\ncomment: {}\n", user.getAccountId(), comment.getContents());

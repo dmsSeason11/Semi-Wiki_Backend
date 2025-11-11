@@ -45,4 +45,9 @@ public class Comment {
     public void updateContents(String contents) {
         this.contents = contents;
     }
+
+    public Boolean isValidComment(){
+        int countLineBreak = this.contents.length() - this.contents.replace(String.valueOf('\n'),"").length();
+        return countLineBreak > 10;
+    }
 }
