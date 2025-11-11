@@ -26,7 +26,8 @@ public enum ErrorCode {
     DUPLICATE_TITLE(HttpStatus.BAD_REQUEST,"duplicate title"),
     NOT_ACCOUNT_OWNER(HttpStatus.UNAUTHORIZED,"not account owner"),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"image upload error"),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"comment not found");
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"comment not found"),
+    COMMENT_NOT_VALID(HttpStatus.BAD_REQUEST,"comment not valid");
 
     private final HttpStatus httpStatus;
     private final String message;
