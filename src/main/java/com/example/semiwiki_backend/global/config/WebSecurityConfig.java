@@ -11,11 +11,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5174", "http://localhost:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
-                .exposedHeaders("*")
-                .allowCredentials(true)
-                .maxAge(3600);
+            .allowedOrigins(
+                "http://localhost:5174",
+                "http://localhost:5173",
+                "http://localhost:2244",
+                "http://www.semiwiki.iswebj.kr",
+                "http://semiwiki.iswebj.kr")
+            .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
+            .exposedHeaders("")
+            .allowCredentials(true)
+            .maxAge(3600);
     }
 
 }
