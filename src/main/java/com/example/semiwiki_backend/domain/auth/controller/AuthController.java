@@ -8,6 +8,7 @@ import com.example.semiwiki_backend.domain.auth.dto.SignUpRequest;
 import com.example.semiwiki_backend.domain.auth.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class AuthController {
     private final CheckAccountIdService checkAccountIdService;
     private final ReissueService reissueService;
     private final LogoutService logoutService;
+    private final DeleteUserService deleteUserService;
 
 
 
@@ -53,6 +55,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public void logout(@PathVariable String accountId) {
         logoutService.execute(accountId);
+    }
+
+    @DeleteMapping("{accountId}")
+    public void delete(@PathVariable String accountId, Authentication authentication) {
+        deleteUserService.execute(accountId,authentication);
     }
 
 

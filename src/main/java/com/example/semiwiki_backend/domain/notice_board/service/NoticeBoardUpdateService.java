@@ -1,11 +1,10 @@
 package com.example.semiwiki_backend.domain.notice_board.service;
 
-import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardHeaderUpdateRequestDto;
+import com.example.semiwiki_backend.domain.notice_board.dto.request.NoticeBoardUpdateRequestDto;
 import com.example.semiwiki_backend.domain.notice_board.dto.response.NoticeBoardDetailResponseDto;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoard;
 import com.example.semiwiki_backend.domain.notice_board.entity.NoticeBoardHeader;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoHeaderException;
-import com.example.semiwiki_backend.domain.notice_board.exception.NoticeBoardNotFoundException;
+import com.example.semiwiki_backend.domain.notice_board.exception.*;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardHeaderRepository;
 import com.example.semiwiki_backend.domain.notice_board.repository.NoticeBoardRepository;
 import com.example.semiwiki_backend.domain.user.entity.User;
@@ -15,6 +14,8 @@ import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBo
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.Stack;
 @Service
 @RequiredArgsConstructor
 public class NoticeBoardUpdateService {
+    private static final Logger logger = LoggerFactory.getLogger(NoticeBoardUpdateService.class);
     private final NoticeBoardRepository noticeBoardRepository;
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
@@ -33,16 +35,25 @@ public class NoticeBoardUpdateService {
 
 
     @Transactional
-    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardHeaderUpdateRequestDto dto, Integer id, Authentication authentication ) {
+    public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Authentication authentication ) {
         //유저 아이디 jwt토큰에서 가져옴
         CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-        Integer userId = userDetails.getId();
 
         //user, noticeBoard 불러옴
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(UserNotFoundException::new);
         NoticeBoard noticeBoard = noticeBoardRepository.findById(id)
-                .orElseThrow(() -> new NoticeBoardNotFoundException());
+                .orElseThrow(NoticeBoardNotFoundException::new);
+
+        if(dto.getTitle() == null || dto.getTitle().trim().isEmpty())
+            throw new NoTitleException();
+        else if(noticeBoardRepository.existsByTitle(dto.getTitle()) && !(noticeBoard.getTitle().equals(dto.getTitle())))
+            throw new DuplicateTitleException();
+
+        if (dto.getCategories() == null || dto.getCategories().isEmpty())
+            throw new NoCategoryException();
+        else if(dto.getCategories().size() > 3) //카테고리 최대 개수 3개 설정
+            throw new OverRunCategoryException();
 
         //유저가 기여했는지 확인, 기여 안된경우 기여한목록에 추가
         List<UserNoticeBoard> userNoticeBoardList = noticeBoard.getUsers();
@@ -68,6 +79,8 @@ public class NoticeBoardUpdateService {
 
         noticeBoardRepository.save(noticeBoard);
 
+
+        logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
         //반환용
         List<User> users = new ArrayList<>();
         for (UserNoticeBoard userNotice : userNoticeBoardList)
@@ -91,12 +104,12 @@ public class NoticeBoardUpdateService {
 
         for (String line: contents.split("\n")) {
             int headerSize = 0;
-            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
-                headerSize++;
-            }
-            boolean isValidHeader = headerSize > 0 &&
-                    line.length() > headerSize &&
-                    line.charAt(headerSize) == ' ';
+//            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
+//                headerSize++;
+//            }
+            if(line.trim().indexOf("<h") == 0){
+                headerSize = Character.getNumericValue(line.trim().charAt(2));     }
+            boolean isValidHeader = headerSize > 0 ;
 
             //헤더 있는경우 - 수정: isValidHeader 사용
             if(isValidHeader) {
@@ -104,7 +117,7 @@ public class NoticeBoardUpdateService {
                     stack.peek().setContentsInGenerate(headerContents);
                 }
                 headerContents = "";
-                String title = line.substring(headerSize + 1).trim();
+                String title = line.trim().substring("<hx>".length(), line.length() - "<hx/>".length()).trim();
                 levelCount[headerSize - 1]++;
                 for(int i = headerSize; i < 6; i++)
                     levelCount[i] = 0;

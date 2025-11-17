@@ -1,0 +1,26 @@
+package com.example.semiwiki_backend.global.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+
+@Configuration
+public class WebSecurityConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry){
+        registry.addMapping("/**")
+            .allowedOrigins(
+                "http://localhost:5174",
+                "http://localhost:5173",
+                "http://localhost:2244",
+                "http://www.semiwiki.iswebj.kr",
+                "http://semiwiki.iswebj.kr")
+            .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
+            .exposedHeaders("")
+            .allowCredentials(true)
+            .maxAge(3600);
+    }
+
+}

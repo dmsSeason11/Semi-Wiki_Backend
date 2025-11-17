@@ -1,12 +1,11 @@
 package com.example.semiwiki_backend.domain.user_like.exception;
 
 import com.example.semiwiki_backend.global.exception.ErrorCode;
+import com.example.semiwiki_backend.global.exception.SemiWikiException;
 
-public class AlreadyLikedException extends RuntimeException {
-    private final ErrorCode errorCode;
+public class AlreadyLikedException extends SemiWikiException {
 
     public AlreadyLikedException() {
-        super(ErrorCode.ALREADY_LIKED.getMessage());
-        errorCode = ErrorCode.ALREADY_LIKED;
+        super(ErrorCode.ALREADY_LIKED);
     }
 }

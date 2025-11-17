@@ -1,7 +1,9 @@
 package com.example.semiwiki_backend.domain.notice_board.entity;
 
+import com.example.semiwiki_backend.domain.comment.entity.Comment;
 import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBoard;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +15,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 @Getter
 @Builder
@@ -26,10 +27,11 @@ public class NoticeBoard {
     @Column(unique = true, nullable = false)
     private int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
 
     @CreationTimestamp
@@ -40,7 +42,7 @@ public class NoticeBoard {
     @Column(name = "modificated_at")
     private LocalDateTime modficatedAt;
 
-    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "noticeBoard", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"user"})
     private List<UserNoticeBoard> users = new ArrayList<>();
 
@@ -52,6 +54,9 @@ public class NoticeBoard {
     @CollectionTable(name = "NoticeBoardCategory", joinColumns = @JoinColumn(name = "notice_board_id"))
     @Column(name = "category")
     private List<String> categories = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public void addUserNotice(UserNoticeBoard userNoticeBoard) {
         if(this.users == null) {
@@ -70,5 +75,9 @@ public class NoticeBoard {
         this.categories = categories;
         this.title = title;
         this.users = users;
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 }
