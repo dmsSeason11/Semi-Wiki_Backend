@@ -88,7 +88,7 @@ public class NoticeBoardCreateService {
         //이미지 매핑
         htmlImageExtractService.assignImagesToNoticeBoard(noticeBoard.getId(), imageUrls);
 
-        logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
+        logger.info("\nuser : {}\ntitle : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getTitle(),noticeBoard.getContents());
 
         //반환은 detail로
         return NoticeBoardDetailResponseDto.builder()

@@ -42,7 +42,7 @@ public class CommentUpdateService {
         
         commentRepository.save(comment);
 
-        logger.info("user: {}\ncomment: {}\n", user.getAccountId(), comment.getContents());
+        logger.info("user: {}\nboardName: {}\ncomment: {}\n", user.getAccountId(),comment.getNoticeBoard().getTitle(), comment.getContents());
         return CommentDetailResponseDto.builder()
                 .wroteAt(comment.getWroteAt())
                 .modificatedAt(comment.getModificatedAt())

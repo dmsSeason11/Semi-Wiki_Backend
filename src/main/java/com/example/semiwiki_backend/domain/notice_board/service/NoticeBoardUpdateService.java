@@ -80,7 +80,7 @@ public class NoticeBoardUpdateService {
         noticeBoardRepository.save(noticeBoard);
 
 
-        logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
+        logger.info("\nuser : {}\ntitle : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getTitle(),noticeBoard.getContents());
         //반환용
         List<User> users = new ArrayList<>();
         for (UserNoticeBoard userNotice : userNoticeBoardList)
