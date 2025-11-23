@@ -113,7 +113,7 @@ public class NoticeBoardCreateService {
 //            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
 //                headerSize++;
 //            }
-            if(line.trim().indexOf("<h") == 0){
+            if(line.trim().indexOf("<h") == 0 && line.trim().charAt(2) != 'r'){
                 headerSize = Character.getNumericValue(line.trim().charAt(2));     }
             boolean isValidHeader = headerSize > 0 ;
 
