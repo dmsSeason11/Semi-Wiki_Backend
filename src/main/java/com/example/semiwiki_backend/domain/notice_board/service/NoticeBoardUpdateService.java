@@ -32,6 +32,7 @@ public class NoticeBoardUpdateService {
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
     private final NoticeBoardHeaderRepository noticeBoardHeaderRepository;
+    private final HtmlImageExtractService htmlImageExtractService;
 
 
     @Transactional
@@ -78,7 +79,11 @@ public class NoticeBoardUpdateService {
                 ,dto.getCategories());
 
         noticeBoardRepository.save(noticeBoard);
+        // HTML에서 이미지 URL 추출
+        List<String> imageUrls = htmlImageExtractService.extractImageUrls(dto.getContents());
 
+        // 이미지 매핑
+        htmlImageExtractService.assignImagesToNoticeBoard(noticeBoard.getId(), imageUrls);
 
         logger.info("\nuser : {}\ntitle : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getTitle(),noticeBoard.getContents());
         //반환용
