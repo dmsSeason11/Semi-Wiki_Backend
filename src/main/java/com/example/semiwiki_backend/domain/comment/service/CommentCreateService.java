@@ -45,7 +45,7 @@ public class CommentCreateService {
         comment = commentRepository.save(comment);
         noticeBoard.addComment(comment);
 
-        logger.info("user: {}\ncomment: {}\n", user.getAccountId(), comment.getContents());
+        logger.info("user: {}\nboardName: {}\ncomment: {}\n", user.getAccountId(),noticeBoard.getTitle(), comment.getContents());
 
         return CommentDetailResponseDto.builder()
                 .wroteAt(comment.getWroteAt())

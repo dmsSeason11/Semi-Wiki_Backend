@@ -88,7 +88,7 @@ public class NoticeBoardCreateService {
         //이미지 매핑
         htmlImageExtractService.assignImagesToNoticeBoard(noticeBoard.getId(), imageUrls);
 
-        logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
+        logger.info("\nuser : {}\ntitle : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getTitle(),noticeBoard.getContents());
 
         //반환은 detail로
         return NoticeBoardDetailResponseDto.builder()
@@ -113,7 +113,7 @@ public class NoticeBoardCreateService {
 //            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
 //                headerSize++;
 //            }
-            if(line.trim().indexOf("<h") == 0){
+            if(line.trim().indexOf("<h") == 0 && line.trim().charAt(2) != 'r'){
                 headerSize = Character.getNumericValue(line.trim().charAt(2));     }
             boolean isValidHeader = headerSize > 0 ;
 

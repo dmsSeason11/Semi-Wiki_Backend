@@ -32,6 +32,7 @@ public class NoticeBoardUpdateService {
     private final UserRepository userRepository;
     private final UserNoticeBoardRepository userNoticeBoardRepository;
     private final NoticeBoardHeaderRepository noticeBoardHeaderRepository;
+    private final HtmlImageExtractService htmlImageExtractService;
 
 
     @Transactional
@@ -78,9 +79,13 @@ public class NoticeBoardUpdateService {
                 ,dto.getCategories());
 
         noticeBoardRepository.save(noticeBoard);
+        // HTML에서 이미지 URL 추출
+        List<String> imageUrls = htmlImageExtractService.extractImageUrls(dto.getContents());
 
+        // 이미지 매핑
+        htmlImageExtractService.assignImagesToNoticeBoard(noticeBoard.getId(), imageUrls);
 
-        logger.info("user : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getContents());
+        logger.info("\nuser : {}\ntitle : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getTitle(),noticeBoard.getContents());
         //반환용
         List<User> users = new ArrayList<>();
         for (UserNoticeBoard userNotice : userNoticeBoardList)
@@ -107,7 +112,7 @@ public class NoticeBoardUpdateService {
 //            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
 //                headerSize++;
 //            }
-            if(line.trim().indexOf("<h") == 0){
+            if(line.trim().indexOf("<h") == 0 && line.trim().charAt(2) != 'r'){
                 headerSize = Character.getNumericValue(line.trim().charAt(2));     }
             boolean isValidHeader = headerSize > 0 ;
 
