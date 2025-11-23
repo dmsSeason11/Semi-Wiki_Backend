@@ -31,7 +31,8 @@ public class NoticeBoardHeader {
     @Column(nullable = false)
     private Integer level;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    @Lob
     private String contents;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
