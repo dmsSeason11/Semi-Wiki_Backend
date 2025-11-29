@@ -108,7 +108,7 @@ public class NoticeBoardCreateService {
                 .build();
     }
 
-    public List<NoticeBoardHeader> parseMarkdownToHeaders(String contents) {
+    private List<NoticeBoardHeader> parseMarkdownToHeaders(String contents) {
         List<NoticeBoardHeader> headers = new ArrayList<>();
         Stack<NoticeBoardHeader> stack = new Stack<>();
         int[] levelCount = new int[6];
