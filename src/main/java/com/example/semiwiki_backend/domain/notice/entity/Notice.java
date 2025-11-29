@@ -14,13 +14,23 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Notice {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
 
     @Column(length = 5000)
-    private String content;
+    private String contents;
 
     @Enumerated(EnumType.STRING)
     private Type type;
+
+    public void updateNotice(String title, String contents, Type type) {
+        if(title != null)
+            this.title = title;
+        if(contents != null)
+            this.contents = contents;
+        if(type != null)
+            this.type = type;
+    }
 }
