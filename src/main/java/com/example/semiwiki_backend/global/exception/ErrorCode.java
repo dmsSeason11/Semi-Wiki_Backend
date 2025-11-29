@@ -27,7 +27,8 @@ public enum ErrorCode {
     NOT_ACCOUNT_OWNER(HttpStatus.UNAUTHORIZED,"not account owner"),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"image upload error"),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"comment not found"),
-    COMMENT_NOT_VALID(HttpStatus.BAD_REQUEST,"comment not valid");
+    COMMENT_NOT_VALID(HttpStatus.BAD_REQUEST,"comment not valid"),
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND,"notice not found");
 
     private final HttpStatus httpStatus;
     private final String message;
