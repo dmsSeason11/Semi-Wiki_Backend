@@ -7,7 +7,7 @@ on:
       - reopened
     branches:
       - main
-      - dev
+      - develop
 
 jobs:
   send-discord-notification:
@@ -22,4 +22,5 @@ jobs:
             <@&1399317535903453269>
             `[${{ github.event.pull_request.base.ref }} -> ${{ github.event.pull_request.head.ref }}] PR이 생성되었습니다.
             생성자: ${{ github.event.pull_request.user.name }}
+            
             ${{ github.event.pull_request.html_url }}
