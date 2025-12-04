@@ -20,6 +20,7 @@ jobs:
         with:
           args: |-
             <@&1399317535903453269>
-            `[${{ github.event.pull_request.head.ref }} - ${{ github.event.pull_request.base.ref }}]` PR이 생성되었습니다.
+            `[${{ github.event.pull_request.head.ref }} <- ${{ github.event.pull_request.base.ref }}]` PR이 생성되었습니다.
+            `[생성자 : ${{ github.event.actor.login }}]`
             
             ${{ github.event.pull_request.html_url }}
