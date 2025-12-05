@@ -75,7 +75,7 @@ public class NoticeBoardUpdateService {
         }
 
         List<NoticeBoardHeader> headers = parseMarkdownToHeaders(dto.getContents());
-        if(headers == null)
+        if(headers == null || headers.isEmpty())
             throw new NoHeaderException();
 
         noticeBoard.updateHeaderEmpty();
