@@ -24,8 +24,8 @@ public class AuthController {
     private final DeleteUserService deleteUserService;
 
 
-
-    @PostMapping("/signup")
+    // 회원가입은 임시적으로 막아둔 상태
+    // @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public TokenResponse signUp(@RequestBody SignUpRequest signUpRequest) {
         return signUpService.execute(signUpRequest);

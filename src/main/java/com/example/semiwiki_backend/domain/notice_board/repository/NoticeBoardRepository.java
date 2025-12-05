@@ -19,6 +19,7 @@ public interface NoticeBoardRepository extends JpaRepository<NoticeBoard, Intege
         WHERE c IN :categories
         GROUP BY n
         HAVING COUNT(DISTINCT c) = :categoryCount
+        ORDER BY n.createdAt DESC
         """)
     List<NoticeBoard> findByCategoriesAllMatch(
             @Param("categories") List<String> categories,

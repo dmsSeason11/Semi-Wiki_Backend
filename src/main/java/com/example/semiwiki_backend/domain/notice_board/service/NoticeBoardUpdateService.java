@@ -14,6 +14,10 @@ import com.example.semiwiki_backend.domain.user_notice_board.entity.UserNoticeBo
 import com.example.semiwiki_backend.domain.user_notice_board.repository.UserNoticeBoardRepository;
 import com.example.semiwiki_backend.global.security.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -33,7 +37,7 @@ public class NoticeBoardUpdateService {
     private final UserNoticeBoardRepository userNoticeBoardRepository;
     private final NoticeBoardHeaderRepository noticeBoardHeaderRepository;
     private final HtmlImageExtractService htmlImageExtractService;
-
+    
 
     @Transactional
     public NoticeBoardDetailResponseDto updateNoticeBoard(NoticeBoardUpdateRequestDto dto, Integer id, Authentication authentication ) {
@@ -79,10 +83,11 @@ public class NoticeBoardUpdateService {
                 ,dto.getCategories());
 
         noticeBoardRepository.save(noticeBoard);
-        // HTML에서 이미지 URL 추출
+
+        //HTML에서 이미지 URL 추출
         List<String> imageUrls = htmlImageExtractService.extractImageUrls(dto.getContents());
 
-        // 이미지 매핑
+        //이미지 매핑
         htmlImageExtractService.assignImagesToNoticeBoard(noticeBoard.getId(), imageUrls);
 
         logger.info("\nuser : {}\ntitle : {}\nboard : \n{}\n", user.getAccountId() ,noticeBoard.getTitle(),noticeBoard.getContents());
@@ -105,78 +110,64 @@ public class NoticeBoardUpdateService {
         List<NoticeBoardHeader> headers = new ArrayList<>();
         Stack<NoticeBoardHeader> stack = new Stack<>();
         int[] levelCount = new int[6];
-        String headerContents = "";
 
-        for (String line: contents.split("\n")) {
-            int headerSize = 0;
-//            for (int i = 0; i < line.length() && line.charAt(i) == '#' && headerSize < 6; i++) {
-//                headerSize++;
-//            }
-            if(line.trim().indexOf("<h") == 0 && line.trim().charAt(2) != 'r'){
-                headerSize = Character.getNumericValue(line.trim().charAt(2));     }
-            boolean isValidHeader = headerSize > 0 ;
+        Document doc = Jsoup.parse(contents);
+        Elements elements = doc.select("h1, h2, h3, h4, h5, h6");
 
-            //헤더 있는경우 - 수정: isValidHeader 사용
-            if(isValidHeader) {
-                if (!stack.isEmpty()) {
-                    stack.peek().setContentsInGenerate(headerContents);
-                }
-                headerContents = "";
-                String title = line.trim().substring("<hx>".length(), line.length() - "<hx/>".length()).trim();
-                levelCount[headerSize - 1]++;
-                for(int i = headerSize; i < 6; i++)
-                    levelCount[i] = 0;
+        for (Element h : elements) {
+            int level = Integer.parseInt(h.tagName().substring(1)); // h1~h6 -> 1~6
+            levelCount[level - 1]++;
+            for (int i = level; i < 6; i++) levelCount[i] = 0;
 
-                //1.1.1 이런거 저장하는 함수
-                String headerNumber = "";
-                for(int i = 0;i<headerSize;i++){
-                    if(levelCount[i] == 0){
-                        continue;
-                    }
-                    if(!headerNumber.isEmpty()) headerNumber += ".";
-                    headerNumber += levelCount[i];
-                }
-
-                while (!stack.isEmpty() && stack.peek().getLevel() >= headerSize) { //지금 헤더가 앞 헤더보다 큰경우
-                    stack.pop(); // 스택에서 제거
-                }
-
-                NoticeBoardHeader header = NoticeBoardHeader.builder()
-                        .number(levelCount[headerSize-1])
-                        .headerNumber(headerNumber)
-                        .level(headerSize)
-                        .contents("")
-                        .title(title)
-                        .children(new ArrayList<>())
-                        .build();
-
-                // noticeBoard가 있으면 헤더를 DB에 저장
-
-                headerContents = "";
-                if (!stack.isEmpty()) {
-                    stack.peek().getChildren().add(header);
-                } else {
-                    headers.add(header);
-                }
-                stack.push(header);
+            // 1.1.1 식의 headerNumber 생성
+            String headerNumber = "";
+            for (int i = 0; i < level; i++) {
+                if (levelCount[i] == 0) continue;
+                if (!headerNumber.isEmpty()) headerNumber += ".";
+                headerNumber += levelCount[i];
             }
-            else {
-                headerContents += line + "\n";
+
+            // 부모 헤더 찾기
+            while (!stack.isEmpty() && stack.peek().getLevel() >= level) {
+                stack.pop();
             }
+            NoticeBoardHeader parentHeader = stack.isEmpty() ? null : stack.peek();
+
+            // 본문 수집 (다음 헤더 전까지)
+            StringBuilder contentsBuilder = new StringBuilder();
+            Element next = h.nextElementSibling();
+            while (next != null && !next.tagName().matches("h[1-6]")) {
+                contentsBuilder.append(next.outerHtml()); // outerHtml()은 태그 포함 전체 HTML
+                next = next.nextElementSibling();
+            }
+
+            // 엔티티 생성 시
+            NoticeBoardHeader header = NoticeBoardHeader.builder()
+                    .number(levelCount[level - 1])
+                    .headerNumber(headerNumber)
+                    .level(level)
+                    .title(h.text()) // 헤더 텍스트만 제목
+                    .contents(contentsBuilder.toString().trim()) // 본문은 HTML 그대로
+                    .children(new ArrayList<>())
+                    .build();
+
+            // 부모-자식 관계 세팅
+            if (parentHeader != null) {
+                parentHeader.getChildren().add(header);
+            } else {
+                headers.add(header); // 최상위 헤더
+            }
+
+            stack.push(header);
         }
-        if (!stack.isEmpty()) {
-            stack.peek().setContentsInGenerate(headerContents);
-        }
-        // 자식 헤더들도 모두 저장 (재귀적으로)
+
         saveChildrenHeaders(headers);
         return headers;
     }
 
     private void saveChildrenHeaders(List<NoticeBoardHeader> headers) {
         for (NoticeBoardHeader header : headers) {
-            // 최상위 헤더들도 저장
             noticeBoardHeaderRepository.save(header);
-            // 자식 헤더들이 있으면 재귀적으로 저장
             if (!header.getChildren().isEmpty()) {
                 saveChildrenHeaders(header.getChildren());
             }
