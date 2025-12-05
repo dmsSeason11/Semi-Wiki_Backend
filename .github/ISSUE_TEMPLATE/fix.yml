@@ -1,4 +1,4 @@
-name: feature
+name: fix
 description: 발생한 오류의 이슈를 생성하세요.
 labels: ["bug"]
 body:
